@@ -1,61 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-    <link rel="stylesheet" href="/css/custom.css" />
-    <title>Document</title>
-</head>
-<body>
-    <nav class="navbar my-navbar navbar-expand-lg navbar-light bg-white">
-        <div class="container">
-          <a class="navbar-brand" href="#">
-            <img src="https://imgur.com/sbUlQpy" alt="" />
-            LOGO</a
-          >
-          <button
-            class="navbar-toggler border-0"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span
-              class="iconify bar-icon"
-              data-icon="fa-solid:bars"
-              data-inline="false"
-            ></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-            {{-- nav-active --}}
-              <li class="nav-item">
-                <a class="nav-link" href="/">
-                    Home
-                </a>
-              </li>
-              @if(Session::has('loginId'))
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile">Profile</a>
-                </li>
-              @endif
-              @if(!Session::has('loginId'))
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
-              @endif
-            </ul>
-          </div>
-        </div>
-    </nav>
+@extends('layouts.main')
+@section('content')
     <div class="container">
         <div class="row gap-3">
             <div class="col-12">
@@ -77,22 +21,25 @@
                             <h4 class="card-title mt-3 text-center">Create Account</h4>
                             <p class="text-center">Get started with your free account</p>
                             <p>
-                                <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-twitter"></i>   Login via Twitter</a>
-                                <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via facebook</a>
+                                <a href="{{ route('auth.google') }}">
+                                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" style="margin-left: 3em;">
+                                </a>
+                                {{-- <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-google"></i>   Login via Google</a> --}}
+                                {{-- <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via facebook</a> --}}
                             </p>
                             <p class="divider-text">
                                 <span class="bg-light">OR</span>
                             </p>
-                            <form action="{{route('register')}}" method="POST">
+                            <form action="{{route('register')}}" method="POST"  id="register-user" >
                                 @csrf
                                 <div class="d-flex flex-column">
                                     <div class="form-group input-group m-0">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                                         </div>
-                                        <input name="firstname" value="{{old('firstname')}}" class="form-control" placeholder="First name" type="text">
+                                        <input name="firstname" id="firstname" value="{{old('firstname')}}" class="form-control" placeholder="First name" type="text">
                                     </div>
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="firstname-error" class="text-danger error-msg my-2 ml-3">
                                         @error('firstname')
                                             {{$message}}
                                         @enderror
@@ -103,9 +50,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                                         </div>
-                                        <input name="lastname" value="{{old('lastname')}}" class="form-control" placeholder="Last name" type="text">
+                                        <input name="lastname" id="lastname" value="{{old('lastname')}}" class="form-control" placeholder="Last name" type="text">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="lastname-error" class="text-danger error-msg my-2 ml-3">
                                         @error('lastname')
                                             {{$message}}
                                         @enderror
@@ -116,9 +63,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                                         </div>
-                                        <input name="email" value="{{old('email')}}" class="form-control" placeholder="Email address" type="email">
+                                        <input name="email" id="email" value="{{old('email')}}" class="form-control" placeholder="Email address" type="email">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="email-error" class="text-danger error-msg my-2 ml-3">
                                         @error('email')
                                             {{$message}}
                                         @enderror
@@ -129,9 +76,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                         </div>
-                                        <input name="password" value="{{old('password')}}" class="form-control" placeholder="Password" type="password">
+                                        <input name="password" id="password" value="{{old('password')}}" class="form-control" placeholder="Password" type="password">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="password-error" class="text-danger error-msg my-2 ml-3">
                                         @error('password')
                                             {{$message}}
                                         @enderror
@@ -142,9 +89,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                         </div>
-                                        <input name="password_confirmation" value="{{old('password_confirmation')}}" class="form-control" placeholder="Repeat password" type="password">
+                                        <input name="password_confirmation" id="password_confirmation" value="{{old('password_confirmation')}}" class="form-control" placeholder="Repeat password" type="password">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="password_confirmation-error" class="text-danger error-msg my-2 ml-3">
                                         @error('password_confirmation')
                                             {{$message}}
                                         @enderror
@@ -161,7 +108,63 @@
             </div>
         </div>
     </div>
-</body>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</html>
+    <script>
+        $(document).ready(function() {
+            $('#register-user').validate({
+                rules: {
+                    firstname: {
+                        required: true,
+                        maxlength: 100
+                    },
+                    lastname: {
+                        required: true,
+                        maxlength: 100
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                        remote: {
+                            url: "{{ route('check-email') }}",
+                            type: "POST",
+                            data: {
+                                email: function() {
+                                    return $('#email').val();
+                                }
+                            }
+                        }
+                    },
+                    password: {
+                        required: true,
+                        minlength: 8
+                    },
+                    password_confirmation: {
+                        required: true,
+                        equalTo: "#password"
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Please enter your name.",
+                        maxlength: "Name must not exceed 255 characters."
+                    },
+                    email: {
+                        required: "Please enter your email address.",
+                        email: "Please enter a valid email address.",
+                        remote: "This email is already taken."
+                    },
+                    password: {
+                        required: "Please enter your password.",
+                        minlength: "Password must be at least 8 characters long."
+                    },
+                    password_confirmation: {
+                        required: "Please confirm your password.",
+                        equalTo: "Passwords do not match."
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    error.appendTo(element.parent().siblings('.error-msg'));
+                }
+            });
+        });
+    </script>
+@endsection

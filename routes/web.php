@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
+use App\Http\Controllers\GoogleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,12 @@ Route::get('/register', [User::class, 'register'])->middleware('alreadyLoggedIn'
 Route::post('/register', [User::class, 'registerPost'])->name('register');
 Route::get('/profile', [User::class, 'profile'])->middleware('isLoggedIn');
 Route::get('/logout', [User::class, 'logout']);
+Route::post('/reset-password', [User::class, 'resetPassword'])->name('reset-password');
+Route::post('/check-email', [User::class, 'checkEmail'])->name('check-email');
+
+
+Route::controller(GoogleController::class)->group(function(){
+    Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('auth/google/callback', 'handleGoogleCallback');
+});
 
