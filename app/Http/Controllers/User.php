@@ -42,6 +42,8 @@ class User extends Controller
 
     }
 
+    //SHTUAR KOMENT
+
     public function loginPost(Request $request) {
         $request->validate([
             'email' => 'required|email|max:100',
