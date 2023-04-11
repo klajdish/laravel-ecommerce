@@ -46,7 +46,7 @@ class User extends Controller
         $result = $user->save();
 
         if($result) {
-            return back()->with('success', 'You have registered successfully');
+            return redirect('login')->with('success', 'You have registered successfully');
         }else {
             return back()->with('fail', 'Something went wrong');
         }
@@ -116,22 +116,39 @@ class User extends Controller
     }
 
     public function resetPassword(Request $request) {
+        $user = UserModel::where('id', Session::get('loginId'))->first();
+
         $request->validate([
-            'old_password' => 'required|min:8|max:50',
-            'password' => 'required|confirmed|min:8|max:50',
+            'old_password' => [
+                'required',
+                'min:8',
+                'max:50',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (!Hash::check($value, $user->password)) {
+                        $fail('The password is incorrect.');
+                    }
+                }
+            ],
+            'password' => [
+                'required',
+                'min:8',
+                'max:50',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (Hash::check($value, $user->password)) {
+                        $fail('Your new password is the same as the old password.');
+                    }
+                },
+                'confirmed'
+            ]
         ]);
 
-        $user = UserModel::where('id', Session::get('loginId'))->first();
 
         if(Hash::check($request->old_password, $user->password)){
             $user->password = Hash::make($request->password);
             $user->save();
-            return back()->with('success', 'Password changed successfully');
+            return redirect('logout')->with('success', 'Password changed successfully');
         }else {
-            // $validator = new Validator();
-            // dd(get_class_methods($validator));
-            // $validator->getMessageBag()->add('password', 'Password wrong');
-            return back()->with('fail', 'Password is incorrect');
+            return back()->with('fail', 'Something went wrong');
         }
 
     }
