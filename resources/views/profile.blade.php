@@ -86,16 +86,16 @@
                     </div>
                     <h3 class="mt-5">Reset Password</h3>
                     <div>
-                        <form action="{{route('reset-password')}}" method="POST">
+                        <form action="{{route('reset-password')}}" id="reset-password" method="POST">
                             @csrf
                             <div class="d-flex flex-column">
                                 <div class="form-group input-group m-0">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                     </div>
-                                    <input name="old_password" class="form-control" placeholder="Old Password" type="password">
+                                    <input name="old_password" id="old_password" class="form-control" placeholder="Old Password" type="password">
                                 </div> <!-- form-group// -->
-                                <span class="text-danger my-2 ml-3">
+                                <span  id="old_password-error" class="text-danger my-2 ml-3 error-msg">
                                     @error('old_password')
                                         {{$message}}
                                     @enderror
@@ -106,9 +106,9 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                     </div>
-                                    <input name="password" class="form-control" placeholder="New Password" type="password">
+                                    <input name="password" id="password" class="form-control" placeholder="New Password" type="password">
                                 </div> <!-- form-group// -->
-                                <span class="text-danger my-2 ml-3">
+                                <span  id="password-error" class="text-danger my-2 ml-3 error-msg">
                                     @error('password')
                                         {{$message}}
                                     @enderror
@@ -119,9 +119,9 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                     </div>
-                                    <input name="password_confirmation" class="form-control" placeholder="Confirm password" type="password">
+                                    <input name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirm password" type="password">
                                 </div> <!-- form-group// -->
-                                <span class="text-danger my-2 ml-3">
+                                <span  id="password_confirmation-error" class="text-danger my-2 ml-3 error-msg">
                                     @error('password_confirmation')
                                         {{$message}}
                                     @enderror
@@ -136,4 +136,63 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $.validator.addMethod("strongPassword", function(value, element) {
+                return this.optional(element) || /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/.test(value);
+            }, "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.");
+
+            $('#reset-password').validate({
+                rules: {
+                    old_password: {
+                        required: true,
+                        minlength: 8,
+                        maxlength: 100,
+                    },
+                    password: {
+                        required: true,
+                        minlength: 8,
+                        strongPassword: true,
+                        maxlength: 100,
+                        remote: {
+                            url: "{{ route('check-password') }}",
+                            type: "POST",
+                            data: {
+                                password: function() {
+                                    return $('#password').val();
+                                }
+                            }
+                        }
+                    },
+                    password_confirmation: {
+                        required: true,
+                        equalTo: "#password",
+                        maxlength: 100,
+                    }
+                },
+                messages: {
+                    old_password: {
+                        required: "Please enter your old password.",
+                        minlength: "Password must be at least 8 characters long.",
+                        maxlength: "Password must not exceed 100 characters."
+                    },
+                    password: {
+                        required: "Please enter your password.",
+                        minlength: "Password must be at least 8 characters long.",
+                        strongPassword: "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.",
+                        remote: "Your new password is the same as the old password.",
+                        maxlength: "Password must not exceed 100 characters."
+                    },
+                    password_confirmation: {
+                        required: "Please confirm your password.",
+                        equalTo: "Passwords do not match.",
+                        maxlength: "Password Confirmation must not exceed 100 characters."
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    error.appendTo(element.parent().siblings('.error-msg'));
+                }
+            });
+        });
+    </script>
 @endsection

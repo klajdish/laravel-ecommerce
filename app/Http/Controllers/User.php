@@ -26,7 +26,15 @@ class User extends Controller
             'firstname' => 'required|max:100',
             'lastname' => 'required|max:100',
             'email' => 'required|email|unique:users|max:100',
-            'password' => 'required|confirmed|min:8|max:50',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])$/',
+                'confirmed',
+                'max:100'
+            ]
+        ], [
+            'password.regex' => 'Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.',
         ]);
 
         $user = new UserModel();
@@ -49,17 +57,38 @@ class User extends Controller
 
     public function loginPost(Request $request) {
         $request->validate([
-            'email' => 'required|email|max:100',
-            'password' => 'required|min:8|max:50',
+            'email' => [
+                'required',
+                'email',
+                'max:100',
+                function ($attribute, $value, $fail) use ($request) {
+                    $user = UserModel::where('email', $request->email)->first();
+                    if (!$user) {
+                        $fail('The email does not exist.');
+                    }
+                }
+            ],
+            'password' => [
+                'required',
+                'min:8',
+                'max:50',
+                function ($attribute, $value, $fail) use ($request) {
+                    $user = UserModel::where('email', $request->email)->first();
+                    if ($user && !Hash::check($value, $user->password)) {
+                        $fail('The password does not match the email.');
+                    }
+                }
+            ]
         ]);
+
         $user = UserModel::where('email', $request->email)->first();
+
         if($user){
             if(Hash::check($request->password, $user->password)){
                 $request->session()->put('loginId', $user->id);
                 return redirect('profile')->with('success', 'You have logged in successfully');
             }else {
-                return back()->withErrors(['password', 'Password is incorrect']); //
-                // return back()->with('fail', 'Password is incorrect'); //
+                return back()->with('fail', 'Something went wrong'); //
             }
         }else {
             return back()->with('fail', 'Something went wrong');
@@ -112,10 +141,22 @@ class User extends Controller
         $user = UserModel::where('email', $email)->first();
 
         if ($user) {
-            return response()->json(['exists' => true]);
+            return response()->json(false);
         } else {
-            return response()->json(['exists' => false]);
+            return response()->json(true);
         }
     }
 
+    public function checkPassword(Request $request){
+        $password = $request->input('password');
+        $user = UserModel::where('id', Session::get('loginId'))->first();
+
+        $result = Hash::check($password, $user->password);
+
+        if ($result) {
+            return response()->json(false);
+        } else {
+            return response()->json(true);
+        }
+    }
 }

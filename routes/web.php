@@ -29,6 +29,7 @@ Route::get('/profile', [User::class, 'profile'])->middleware('isLoggedIn');
 Route::get('/logout', [User::class, 'logout']);
 Route::post('/reset-password', [User::class, 'resetPassword'])->name('reset-password');
 Route::post('/check-email', [User::class, 'checkEmail'])->name('check-email');
+Route::post('/check-password', [User::class, 'checkPassword'])->name('check-password');
 
 
 Route::controller(GoogleController::class)->group(function(){

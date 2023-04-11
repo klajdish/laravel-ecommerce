@@ -17,7 +17,7 @@
                         @endif
                     </div>
                     <div class="card bg-light" style="width: 500px">
-                        <article class="card-body mx-auto" style="max-width: 700px;">
+                        <article class="card-body m-4" style="max-width: 700px;">
                             <h4 class="card-title mt-3 text-center">Create Account</h4>
                             <p class="text-center">Get started with your free account</p>
                             <p>
@@ -110,6 +110,10 @@
     </div>
     <script>
         $(document).ready(function() {
+            $.validator.addMethod("strongPassword", function(value, element) {
+                return this.optional(element) || /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/.test(value);
+            }, "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.");
+
             $('#register-user').validate({
                 rules: {
                     firstname: {
@@ -123,6 +127,7 @@
                     email: {
                         required: true,
                         email: true,
+                        maxlength: 100,
                         remote: {
                             url: "{{ route('check-email') }}",
                             type: "POST",
@@ -135,30 +140,41 @@
                     },
                     password: {
                         required: true,
-                        minlength: 8
+                        minlength: 8,
+                        strongPassword: true,
+                        maxlength: 100,
                     },
                     password_confirmation: {
                         required: true,
-                        equalTo: "#password"
+                        equalTo: "#password",
+                        maxlength: 100,
                     }
                 },
                 messages: {
-                    name: {
+                    firstname: {
                         required: "Please enter your name.",
-                        maxlength: "Name must not exceed 255 characters."
+                        maxlength: "Name must not exceed 100 characters."
+                    },
+                    lastname: {
+                        required: "Please enter your name.",
+                        maxlength: "Name must not exceed 100 characters."
                     },
                     email: {
                         required: "Please enter your email address.",
                         email: "Please enter a valid email address.",
-                        remote: "This email is already taken."
+                        remote: "This email is already taken.",
+                        maxlength: "Email must not exceed 100 characters."
                     },
                     password: {
                         required: "Please enter your password.",
-                        minlength: "Password must be at least 8 characters long."
+                        minlength: "Password must be at least 8 characters long.",
+                        strongPassword: "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.",
+                        maxlength: "Password must not exceed 100 characters."
                     },
                     password_confirmation: {
                         required: "Please confirm your password.",
-                        equalTo: "Passwords do not match."
+                        equalTo: "Passwords do not match.",
+                        maxlength: "Password Confirmation must not exceed 100 characters."
                     }
                 },
                 errorPlacement: function(error, element) {

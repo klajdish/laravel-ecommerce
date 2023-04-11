@@ -17,7 +17,7 @@
                         @endif
                     </div>
                     <div class="card bg-light" style="width: 500px">
-                        <article class="card-body mx-auto" style="max-width: 700px;">
+                        <article class="card-body m-4" style="max-width: 700px;">
                             <h4 class="card-title mt-3 text-center">Log in</h4>
                             <p>
                                 <a href="{{ route('auth.google') }}">
@@ -29,16 +29,16 @@
                             <p class="divider-text">
                                 <span class="bg-light">OR</span>
                             </p>
-                            <form action="{{route('login')}}" method="POST">
+                            <form action="{{route('login')}}" method="POST" id="login-user">
                                 @csrf
                                 <div class="d-flex flex-column">
                                     <div class="form-group input-group m-0">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                                         </div>
-                                        <input name="email" value="{{old('email')}}" class="form-control" placeholder="Email address" type="email">
+                                        <input name="email" id="email" value="{{old('email')}}" class="form-control" placeholder="Email address" type="email">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="email-error" class="text-danger error-msg my-2 ml-3">
                                         @error('email')
                                             {{$message}}
                                         @enderror
@@ -49,9 +49,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                         </div>
-                                        <input name="password" class="form-control" placeholder="Password" type="password">
+                                        <input name="password" id="password" class="form-control" placeholder="Password" type="password">
                                     </div> <!-- form-group// -->
-                                    <span class="text-danger my-2 ml-3">
+                                    <span id="password-error" class="text-danger error-msg my-2 ml-3">
                                         @error('password')
                                             {{$message}}
                                         @enderror
@@ -68,4 +68,37 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#login-user').validate({
+                rules: {
+                    email: {
+                        required: true,
+                        email: true,
+                        maxlength: 100,
+                    },
+                    password: {
+                        required: true,
+                        minlength: 8,
+                        maxlength: 100,
+                    },
+                },
+                messages: {
+                    email: {
+                        required: "Please enter your email address.",
+                        email: "Please enter a valid email address.",
+                        maxlength: "Email must not exceed 100 characters."
+                    },
+                    password: {
+                        required: "Please enter your password.",
+                        minlength: "Password must be at least 8 characters long.",
+                        maxlength: "Password must not exceed 100 characters."
+                    },
+                },
+                errorPlacement: function(error, element) {
+                    error.appendTo(element.parent().siblings('.error-msg'));
+                }
+            });
+        });
+    </script>
 @endsection
