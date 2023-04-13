@@ -22,7 +22,9 @@
                 <div class="profile-sidebar">
                     <!-- SIDEBAR USERPIC -->
                     <div class="profile-userpic text-center">
-                        <img src="https://gravatar.com/avatar/31b64e4876d603ce78e04102c67d6144?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png" class="img-responsive" alt="">
+                        <img src="{{ asset($user->image) }}" alt="User's profile image">
+
+                        {{-- <img src="https://gravatar.com/avatar/31b64e4876d603ce78e04102c67d6144?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png" class="img-responsive" alt=""> --}}
                     </div>
                     <!-- END SIDEBAR USERPIC -->
                     <!-- SIDEBAR USER TITLE -->
@@ -51,7 +53,7 @@
                             </li>
                             <li>
                                 <a href="#">
-                                    <i class="glyphicon glyphicon-user"></i>
+                                    <i clasusers="glyphicon glyphicon-user"></i>
                                     Account Settings </a>
                             </li>
                         </ul>

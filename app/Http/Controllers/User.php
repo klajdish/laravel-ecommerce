@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Mail;
+
 
 
 class User extends Controller
@@ -29,23 +33,30 @@ class User extends Controller
             'password' => [
                 'required',
                 'min:8',
-                'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])$/',
+                'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/',
                 'confirmed',
                 'max:100'
-            ]
+            ],
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'password.regex' => 'Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.',
         ]);
 
         $user = new UserModel();
 
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $imagePath = $image->storeAs('public/images', $imageName);
+
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->image = Storage::url($imagePath);
         $result = $user->save();
 
         if($result) {
+            Mail::to($user->email)->send(new WelcomeEmail($user));
             return redirect('login')->with('success', 'You have registered successfully');
         }else {
             return back()->with('fail', 'Something went wrong');
@@ -133,6 +144,7 @@ class User extends Controller
                 'required',
                 'min:8',
                 'max:50',
+                'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/',
                 function ($attribute, $value, $fail) use ($user) {
                     if (Hash::check($value, $user->password)) {
                         $fail('Your new password is the same as the old password.');

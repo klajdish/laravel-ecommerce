@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
+use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Mail;
+
 
 class GoogleController extends Controller
 {
@@ -45,10 +48,11 @@ class GoogleController extends Controller
                     'email' => $user->email],[
                     'firstname' => $fullname[0],
                     'lastname' => $fullname[1],
+                    'image' => $user->avatar,
                     'google_id'=> $user->id,
                     'password' => encrypt('123456')
                 ]);
-
+                Mail::to($newUser->email)->send(new WelcomeEmail($newUser));
                 Session::put('loginId', $newUser->id);
                 Session::put('isFromProvider', 1);
 

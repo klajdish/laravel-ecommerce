@@ -20,9 +20,9 @@
                         <article class="card-body m-4" style="max-width: 700px;">
                             <h4 class="card-title mt-3 text-center">Create Account</h4>
                             <p class="text-center">Get started with your free account</p>
-                            <p>
+                            <p class="text-center">
                                 <a href="{{ route('auth.google') }}">
-                                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" style="margin-left: 3em;">
+                                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png">
                                 </a>
                                 {{-- <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-google"></i>   Login via Google</a> --}}
                                 {{-- <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via facebook</a> --}}
@@ -30,7 +30,7 @@
                             <p class="divider-text">
                                 <span class="bg-light">OR</span>
                             </p>
-                            <form action="{{route('register')}}" method="POST"  id="register-user" >
+                            <form action="{{route('register')}}" method="POST"  id="register-user" enctype="multipart/form-data">
                                 @csrf
                                 <div class="d-flex flex-column">
                                     <div class="form-group input-group m-0">
@@ -93,6 +93,19 @@
                                     </div> <!-- form-group// -->
                                     <span id="password_confirmation-error" class="text-danger error-msg my-2 ml-3">
                                         @error('password_confirmation')
+                                            {{$message}}
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <div class="form-group input-group m-0 justify-content-between">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"> <i class="fas fa-image"></i> </span>
+                                        </div>
+                                        <input type="file" name="image" id="image">
+                                    </div> <!-- form-group// -->
+                                    <span id="image-error" class="text-danger error-msg my-2 ml-3">
+                                        @error('image')
                                             {{$message}}
                                         @enderror
                                     </span>
@@ -168,7 +181,6 @@
                     password: {
                         required: "Please enter your password.",
                         minlength: "Password must be at least 8 characters long.",
-                        strongPassword: "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.",
                         maxlength: "Password must not exceed 100 characters."
                     },
                     password_confirmation: {

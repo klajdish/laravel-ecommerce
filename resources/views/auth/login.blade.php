@@ -19,9 +19,9 @@
                     <div class="card bg-light" style="width: 500px">
                         <article class="card-body m-4" style="max-width: 700px;">
                             <h4 class="card-title mt-3 text-center">Log in</h4>
-                            <p>
+                            <p class="text-center">
                                 <a href="{{ route('auth.google') }}">
-                                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" style="margin-left: 3em;">
+                                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png">
                                 </a>
                                 {{-- <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-twitter"></i>   Login via Twitter</a>
                                 <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via facebook</a> --}}
