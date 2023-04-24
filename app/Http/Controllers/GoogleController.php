@@ -37,8 +37,10 @@ class GoogleController extends Controller
 
             if($finduser){
                 Session::put('loginId', $finduser->id);
-                Session::put('isFromProvider', 1);
+                // Session::put('isFromProvider', 1);
                 // Auth::login($finduser);
+                $finduser->image = $user->avatar;
+                $finduser->save();
                 return redirect('profile')->with('success', 'You have logged in successfully');
 
             }else{
@@ -54,8 +56,7 @@ class GoogleController extends Controller
                 ]);
                 Mail::to($newUser->email)->send(new WelcomeEmail($newUser));
                 Session::put('loginId', $newUser->id);
-                Session::put('isFromProvider', 1);
-
+                // Session::put('isFromProvider', 1);
                 // Auth::login($newUser);
 
                 return redirect('profile')->with('success', 'You have logged in successfully');

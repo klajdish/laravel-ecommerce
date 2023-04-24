@@ -123,9 +123,22 @@
     </div>
     <script>
         $(document).ready(function() {
+            // custom methods
             $.validator.addMethod("strongPassword", function(value, element) {
                 return this.optional(element) || /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/.test(value);
             }, "Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.");
+
+            $.validator.addMethod("filesize", function(value, element, param) {
+                var size = element.files[0].size;
+                if (size <= param) {
+                return true;
+                } else {
+                return false;
+                }
+            }, "The selected file must be less than or equal to {0} bytes in size.");
+            // end custom methods
+
+
 
             $('#register-user').validate({
                 rules: {
@@ -161,6 +174,11 @@
                         required: true,
                         equalTo: "#password",
                         maxlength: 100,
+                    },
+                    image: {
+                        required: true,
+                        extension: "jpg|jpeg|png",
+                        filesize: 2097152  // 2 MB
                     }
                 },
                 messages: {
@@ -187,6 +205,11 @@
                         required: "Please confirm your password.",
                         equalTo: "Passwords do not match.",
                         maxlength: "Password Confirmation must not exceed 100 characters."
+                    },
+                    image: {
+                        required: "Please select an image file",
+                        extension: "Please select a file with a valid extension (jpg, jpeg or png)",
+                        filesize: "Please select a file with a size not exceeding 2MB"
                     }
                 },
                 errorPlacement: function(error, element) {

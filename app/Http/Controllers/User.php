@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User as UserModel;
+use App\Models\Product;
 use Faker\Provider\Base;
+use App\Mail\WelcomeEmail;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Models\User as UserModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
-use App\Mail\WelcomeEmail;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 
 class User extends Controller
 {
+    public function home()
+    {
+        $products = Product::take(4)->get();
+        return view('home', compact('products'));
+    }
+
     public function login() {
         return view('auth.login');
     }
@@ -42,11 +49,12 @@ class User extends Controller
             'password.regex' => 'Your password must contain at least one special character, one lowercase letter, one uppercase letter and one digit.',
         ]);
 
-        $user = new UserModel();
 
         $image = $request->file('image');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
         $imagePath = $image->storeAs('public/images', $imageName);
+
+        $user = new UserModel();
 
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
@@ -166,13 +174,37 @@ class User extends Controller
     }
 
     public function checkEmail(Request $request){
-        $email = $request->input('email');
+        $loggedInUser = null;
+        $email = $request->email;  //email i ndryshuar
         $user = UserModel::where('email', $email)->first();
 
-        if ($user) {
-            return response()->json(false);
-        } else {
-            return response()->json(true);
+        if (Session::has('loginId')){
+            $loggedInUser = UserModel::where('id', Session::get('loginId'))->first();
+        }
+        if ($loggedInUser && $user && ($loggedInUser->email != $email)) {
+            return response()->json(false); //shfaq error
+        } else if(!$loggedInUser && $user) {
+            return response()->json(false); //shfaq error
+        }else {
+            return response()->json(true); //mos shfaq error
+        }
+    }
+
+    public function checkUpdateEmail(Request $request){
+        $updateUserId = $request->update;
+        $updateUser = null;
+        $email = $request->email;  //email i ndryshuar
+        $user = UserModel::where('email', $email)->first();
+
+        if ($updateUserId){
+            $updateUser = UserModel::where('id', $updateUserId)->first();
+        }
+        if ($updateUser && $user && ($updateUser->email != $email)) {
+            return response()->json(false); //shfaq error
+        } else if(!$updateUser && $user) {
+            return response()->json(false); //shfaq error
+        }else {
+            return response()->json(true); //mos shfaq error
         }
     }
 
@@ -188,4 +220,42 @@ class User extends Controller
             return response()->json(true);
         }
     }
+
+    public function updateUser(Request $request){
+
+        try {
+            $user1 = UserModel::where('id',Session::get('loginId'))->first();
+
+            if(
+                $request->firstname == $user1->firstname &&
+                $request->last == $user1->lastname &&
+                $request->email == $user1->email
+                ){
+                return redirect('/profile')->with('success', 'You have nothing to change');
+                }
+
+            $validatedData = $request->validate([
+                'firstname' => 'required|max:100',
+                'lastname' => 'required|max:100',
+                'email' => [
+                    'required',
+                    'email',
+                    'max:100',
+                    Rule::unique('users')->ignore(Session::get('loginId'), 'id')
+                ],
+            ]);
+
+            $user = UserModel::where('id', Session::get('loginId'))->update($validatedData);
+            if($user){
+                return redirect('/profile')->with('success', 'Your data is changed succesfully');
+            }else{
+                return redirect('/profile')>with('fail', 'Something went wrong');
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
+    }
+
+
 }
