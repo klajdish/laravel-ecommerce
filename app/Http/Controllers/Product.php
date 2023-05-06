@@ -17,7 +17,15 @@ class Product extends Controller
         $products = null;
 
         if($request->has('category_id')){
-            $products = ProductModel::where('category_id', $request->get('category_id'));
+            $chainIds = $this->getIds($request->get('category_id'));
+            $chainIds[] = (int) $request->get('category_id');
+
+            // $products = ProductModel::where(function ($query) use ($chainIds) {
+            //     foreach ($chainIds as $category_id) {
+            //         $query->where('category_id', $category_id);
+            //     }
+            // });
+            $products = ProductModel::whereIn('category_id', $chainIds);
         }
         if($products && $request->has('size')){
             $products = $products->whereIn('size_id', $selectedSizes);
@@ -38,7 +46,7 @@ class Product extends Controller
             $products = ProductModel::all();
         }
 
-        $categories = Category::all();
+        $categories = Category::whereNull('parent_id')->get();
         $colors = Color::all();
         $sizes = Size::all();
 
@@ -55,6 +63,14 @@ class Product extends Controller
         return view('productDetails');
     }
 
+    public function getIds($category_id, &$ids = []) {
+        $category = Category::where('id', $category_id)->first();
+        if($category && $category->parent_id){
+            $ids[] = $category->parent_id;
+            $this->getIds($category->parent_id, $ids);
+        }
+        return $ids;
+    }
 
 
 }

@@ -50,6 +50,7 @@
                                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                         </div>
                                         <input name="password" id="password" class="form-control" placeholder="Password" type="password">
+                                        <i class="password-toggle fa fa-eye" style="height: fit-content; align-self: center"></i>
                                     </div> <!-- form-group// -->
                                     <span id="password-error" class="text-danger error-msg my-2 ml-3">
                                         @error('password')
@@ -98,6 +99,13 @@
                 errorPlacement: function(error, element) {
                     error.appendTo(element.parent().siblings('.error-msg'));
                 }
+            });
+
+            $('.password-toggle').click(function(){
+                var passwordField = $('#password');
+                var passwordFieldType = passwordField.attr('type');
+                var newPasswordFieldType = passwordFieldType === 'password' ? 'text' : 'password';
+                passwordField.attr('type', newPasswordFieldType);
             });
         });
     </script>

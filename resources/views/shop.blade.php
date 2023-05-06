@@ -16,6 +16,7 @@
 </div>
 <!-- Breadcrumb End -->
 
+
 <!-- Shop Section Begin -->
 <section class="shop spad">
     <div class="container">
@@ -26,24 +27,16 @@
                         <div class="section-title">
                             <h4>Categories</h4>
                         </div>
-                        <div class="categories__accordion">
-                            <div class="accordion" id="accordionExample">
-                                @foreach ($categories as $category)
-                                    <div class="card">
-                                        <div class="card-heading active">
-                                            <a data-toggle="collapse" data-target="#collapseOne">{{$category->name}}</a>
-                                        </div>
-                                        <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                <ul>
-                                                    <li><a href="{{ route('shop', ['category' => $category->name, 'category_id' => $category->id]) }}">{{$category->name}}</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+                        <ul class="list-group">
+                            @foreach ($categories as $category)
+                                <li class="list-group-item">
+                                    <a class="text-decoration-none h6" href="{{ route('shop', ['category' => $category->name, 'category_id' => $category->id]) }}">{{ $category->name }}</a>
+                                    @if (count($category->children))
+                                        @include('partials.categories', ['categories' => $category->children])
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                     {{-- <div class="sidebar__filter">
                         <form action="">
@@ -147,7 +140,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-1.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>
@@ -155,7 +148,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-2.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>
@@ -163,7 +156,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-3.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>
@@ -171,7 +164,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-4.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>
@@ -179,7 +172,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-5.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>
@@ -187,7 +180,7 @@
                 <div class="instagram__item set-bg" data-setbg="storage/images/web/img/instagram/insta-6.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ noobs_shop</a>
                     </div>
                 </div>
             </div>

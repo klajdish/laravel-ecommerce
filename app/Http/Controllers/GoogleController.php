@@ -37,6 +37,8 @@ class GoogleController extends Controller
 
             if($finduser){
                 Session::put('loginId', $finduser->id);
+                Session::put('userRole', $finduser->role);
+
                 // Session::put('isFromProvider', 1);
                 // Auth::login($finduser);
                 $finduser->image = $user->avatar;
@@ -56,6 +58,8 @@ class GoogleController extends Controller
                 ]);
                 Mail::to($newUser->email)->send(new WelcomeEmail($newUser));
                 Session::put('loginId', $newUser->id);
+                Session::put('userRole', $newUser->role);
+
                 // Session::put('isFromProvider', 1);
                 // Auth::login($newUser);
 

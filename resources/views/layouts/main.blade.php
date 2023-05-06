@@ -69,6 +69,9 @@
                         <ul>
                             <li class="active"><a href="/">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
+                            @if (Session::has('userRole') && Session::get('userRole') == 1)
+                                <li><a href="/admin">Admin</a></li>
+                            @endif
                         </ul>
                     </nav>
                 </div>

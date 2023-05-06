@@ -102,7 +102,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label"> Choose Image </label>
-                            <input type="file" id="image" value="{{old('image')}}" class="form-control" name="image" placeholder="">
+                            <input type="file" id="image" value=" {{ isset($user) ? asset($user->image) : old('image')}}" class="form-control" name="image" placeholder="">
                             @if (isset($user))
                                 <img class="w-25 h-25" src="{{asset($user->image)}}" alt="">
                             @endif
@@ -135,11 +135,16 @@
         $.validator.addMethod("filesize", function(value, element, param) {
             var size = element.files[0].size;
             if (size <= param) {
-            return true;
+                return true;
             } else {
-            return false;
+                return false;
             }
         }, "The selected file must be less than or equal to {0} bytes in size.");
+
+        $.validator.addMethod("passwordNotEmpty", function(value, element) {
+            return this.optional(element) || value.trim().length > 0;
+        }, "Password is required");
+
         // end custom methods
 
         $('#add-user').validate({
@@ -224,6 +229,8 @@
             }
         });
 
+        // -------------------------------------------------------------
+
         $('#update-user').validate({
             rules: {
                 firstname: {
@@ -250,17 +257,31 @@
                     }
                 },
                 password: {
+                    required: false,
+                    passwordNotEmpty: true,
                     minlength: 8,
                     strongPassword: true,
+                    remote: {
+                        url: "{{route('check-password') }}",
+                        type: "POST",
+                        data: {
+                            password: function() {
+                                return $('#password').val();
+                            },
+                            'update': '{{isset($user) ? $user->id : null}}'
+                        }
+                    },
                     maxlength: 100,
                 },
                 password_confirmation: {
+                    required: false,
+                    passwordNotEmpty: true,
                     equalTo: "#password",
                     maxlength: 100,
                 },
                 image: {
+                    required: false,
                     extension: "jpg|jpeg|png",
-                    filesize: 2097152  // 2 MB
                 },
                 role: {
                     required: true,
@@ -282,9 +303,10 @@
                     maxlength: "Email must not exceed 100 characters."
                 },
                 password: {
-                    required: "Please enter your password.",
                     minlength: "Password must be at least 8 characters long.",
+                    remote: "Your new password is the same as the old password.",
                     maxlength: "Password must not exceed 100 characters."
+
                 },
                 password_confirmation: {
                     equalTo: "Passwords do not match.",
@@ -292,7 +314,6 @@
                 },
                 image: {
                     extension: "Please select a file with a valid extension (jpg, jpeg or png)",
-                    filesize: "Please select a file with a size not exceeding 2MB"
                 },
                 role: {
                     required: "Please select a role",

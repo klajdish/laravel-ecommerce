@@ -42,6 +42,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $userRoles = [
+                                        1 => 'Super Admin',
+                                        2 => 'Manager',
+                                        3 => 'Simple User',
+                                    ]
+                                @endphp
                                 @foreach ($users as $user)
                                 <tr>
                                     <td>
@@ -53,7 +60,7 @@
                                     <td>{{$user->lastname}}</td>
                                     <td>{{$user->email}}</td>
                                     <td>Albania</td>
-                                    <td>{{$user->role}}</td>
+                                    <td>{{$userRoles[$user->role]}}</td>
                                     <td>{{$user->created_at}}</td>
                                     <td>
                                         <a href="{{route('admin.user.update', $user->id)}}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="editOne">

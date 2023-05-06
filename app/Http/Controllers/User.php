@@ -105,6 +105,7 @@ class User extends Controller
         if($user){
             if(Hash::check($request->password, $user->password)){
                 $request->session()->put('loginId', $user->id);
+                $request->session()->put('userRole', $user->role);
                 return redirect('profile')->with('success', 'You have logged in successfully');
             }else {
                 return back()->with('fail', 'Something went wrong'); //
@@ -128,6 +129,9 @@ class User extends Controller
         }
         if(Session::has('isFromProvider')){
             Session::pull('isFromProvider');
+        }
+        if(Session::has('userRole')){
+            Session::pull('userRole');
         }
 
         return redirect('/login')->with('success', 'You have successfully logged out');
@@ -210,9 +214,16 @@ class User extends Controller
 
     public function checkPassword(Request $request){
         $password = $request->input('password');
+        $result = false;
         $user = UserModel::where('id', Session::get('loginId'))->first();
 
-        $result = Hash::check($password, $user->password);
+        $updateUserId = $request->update;
+        if ($updateUserId){
+            $updateUser = UserModel::where('id', $updateUserId)->first();
+            $result = Hash::check($password, $updateUser->password);
+        } else {
+            $result = Hash::check($password, $user->password);
+        }
 
         if ($result) {
             return response()->json(false);

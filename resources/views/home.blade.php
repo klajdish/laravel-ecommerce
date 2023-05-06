@@ -20,7 +20,7 @@
                     <div class="categories__item set-bg" data-setbg="storage/new-images/16.jpg">
                         <div class="categories__text">
                             <h4>Kids’s fashion</h4>
-                            <a href="#">Shop now</a>
+                            <a href="/shop?category=Kids&category_id=3">Shop now</a>
                         </div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="categories__item set-bg" data-setbg="storage/new-images/15.jpg">
                         <div class="categories__text">
                             <h4>Sports</h4>
-                            <a href="#">Shop now</a>
+                            <a href="/shop?category=Sport&category_id=5">Shop now</a>
                         </div>
                     </div>
                 </div>

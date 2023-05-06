@@ -29,7 +29,7 @@
 					<div class="p-4">
 						<div class="img-circle text-center mb-3">
 							<!-- <img src="img/user2.jpg" alt="Image" class="shadow"> -->
-                            <img src="{{asset($user->image) }}" alt="User's profile image">
+                            <img style="width: 200px; height: 180px" src="{{asset($user->image) }}" alt="User's profile image">
                              {{-- <img src="https://gravatar.com/avatar/31b64e4876d603ce78e04102c67d6144?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png" class="shadow" alt=""> --}}
 						</div>
 						<h4 class="text-center"> {{$user->firstname}} {{$user->lastname}}</h4>
@@ -39,7 +39,7 @@
 							<i class="fa fa-home text-center mr-1"></i>
 							Account
 						</a>
-						<a class="nav-link" id="password-tab" data-toggle="pill" href="#password" role="tab" aria-controls="password" aria-selected="false">
+						<a class="nav-link" id="password-tab" data-toggle="pill" href="#password-t" role="tab" aria-controls="password" aria-selected="false">
 							<i class="fa fa-key text-center mr-1"></i>
 							Password
 						</a>
@@ -100,7 +100,7 @@
                         </form>
 					</div>
                     @if(!$user->google_id)
-                        <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                        <div class="tab-pane fade" id="password-t" role="tabpanel" aria-labelledby="password-tab">
                             <h3 class="mb-4">Password Settings</h3>
                             <form action="{{route('reset-password')}}" method ="POST" id="reset-password">
                                 @csrf

@@ -68,6 +68,7 @@ class Admin extends Controller
         $user->lastname = $request->lastname;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->role = $request->role;
         $user->image = Storage::url($imagePath);
         $result = $user->save();
 
