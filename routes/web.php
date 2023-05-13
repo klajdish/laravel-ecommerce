@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\User;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\Review;
 use App\Http\Controllers\Product;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleController;
@@ -35,7 +36,10 @@ Route::post('/update-user-data', [User::class, 'updateUser'])->name('update-user
 
 
 Route::get('/shop', [Product::class, 'shop'])->name('shop');
-Route::get('/product-details', [Product::class, 'productDetails']);
+Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-details');
+Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
+Route::post('/edit-review', [Review::class, 'editReview'])->name('edit-review');
+
 
 
 Route::controller(GoogleController::class)->group(function(){

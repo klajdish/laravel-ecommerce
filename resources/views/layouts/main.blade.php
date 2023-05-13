@@ -13,14 +13,14 @@
     rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css">
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style1.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/bootstrap.min.css123123123" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/style1.css" type="text/css">
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -173,14 +173,14 @@
 
 </body>
 
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.magnific-popup.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<script src="js/mixitup.min.js"></script>
-<script src="js/jquery.countdown.min.js"></script>
-<script src="js/jquery.slicknav.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/jquery.nicescroll.min.js"></script>
-<script src="js/main.js"></script>
+<script src="http://pweb.com/js/bootstrap.min.js"></script>
+<script src="http://pweb.com/js/jquery.magnific-popup.min.js"></script>
+<script src="http://pweb.com/js/jquery-ui.min.js"></script>
+<script src="http://pweb.com/js/mixitup.min.js"></script>
+<script src="http://pweb.com/js/jquery.countdown.min.js"></script>
+<script src="http://pweb.com/js/jquery.slicknav.js"></script>
+<script src="http://pweb.com/js/owl.carousel.min.js"></script>
+<script src="http://pweb.com/js/jquery.nicescroll.min.js"></script>
+<script src="http://pweb.com/js/main.js"></script>
 
 </html>

@@ -1,7 +1,7 @@
 @extends('layouts.main')
 @section('content')
 <!-- Breadcrumb Begin -->
-<div class="breadcrumb-option">
+{{-- <div class="breadcrumb-option">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -13,51 +13,119 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <!-- Breadcrumb End -->
 
 <!-- Product Details Section Begin -->
+<style>
+.rating-box {
+  padding: 25px 50px;
+  border-radius: 25px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+.rating-box h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.rating-box .stars {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.stars i {
+  font-size: 35px;
+  color: #b5b8b1;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.stars i.active {
+  color: #ffb851;
+  transform: scale(1.2);
+}
+
+.stars input {
+    display: none;
+}
+
+.cart-btn-2 {
+    display:flex;
+    font-size: 14px;
+    color: #ffffff;
+    background: #ca1515;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 14px 30px 15px;
+    border-radius: 50px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+</style>
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-rmDr4LCmzdQ9MBuJg8Ab5lnugLnyRVy1D8VifOFsYiU1T+bW4PRaXLoquUJ1ZT39OkxLnCrhUUp7o9+QaNNffg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+
 <section class="product-details spad">
     <div class="container">
         <div class="row">
+            <div class="col-12">
+                <div class="my-4">
+                    @if(Session::has('success'))
+                        <div class="alert alert-success">
+                            {{Session::get('success')}}
+                        </div>
+                    @endif
+                    <div class="my-4">
+                          <div class="nochanges">
+
+                          </div>
+                    </div>
+                    @if(Session::has('fail'))
+                        <div class="alert alert-danger">
+                            {{Session::get('fail')}}
+                        </div>
+                    @endif
+                </div>
+            </div>
             <div class="col-lg-6">
                 <div class="product__details__pic">
                     <div class="product__details__pic__left product__thumb nice-scroll">
                         <a class="pt active" href="#product-1">
-                            <img src="img/product/details/thumb-1.jpg" alt="">
+                            <img src="{{asset($product->image)}}" alt="">
                         </a>
                         <a class="pt" href="#product-2">
-                            <img src="img/product/details/thumb-2.jpg" alt="">
+                            <img src="{{asset($product->image)}}" alt="">
                         </a>
                         <a class="pt" href="#product-3">
-                            <img src="img/product/details/thumb-3.jpg" alt="">
-                        </a>
-                        <a class="pt" href="#product-4">
-                            <img src="img/product/details/thumb-4.jpg" alt="">
+                            <img src="{{asset($product->image)}}" alt="">
                         </a>
                     </div>
                     <div class="product__details__slider__content">
                         <div class="product__details__pic__slider owl-carousel">
-                            <img data-hash="product-1" class="product__big__img" src="img/product/details/product-1.jpg" alt="">
-                            <img data-hash="product-2" class="product__big__img" src="img/product/details/product-3.jpg" alt="">
-                            <img data-hash="product-3" class="product__big__img" src="img/product/details/product-2.jpg" alt="">
-                            <img data-hash="product-4" class="product__big__img" src="img/product/details/product-4.jpg" alt="">
+                            <img data-hash="product-1" class="product__big__img" src="{{asset($product->image)}}" alt="">
+                            <img data-hash="product-2" class="product__big__img" src="{{asset($product->image)}}" alt="">
+                            <img data-hash="product-3" class="product__big__img" src="{{asset($product->image)}}" alt="">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="product__details__text">
-                    <h3>Essential structured blazer <span>Brand: SKMEIMore Men Watches from SKMEI</span></h3>
+                    <h3>{{$product->name}} <span>Barcode: {{$product->barcode}}</span></h3>
+
+                   @php
+                       $avgRating=round($product->reviews->avg('rating'));
+                    //    dd(get_class_methods( $product->reviews));
+                   @endphp
+
                     <div class="rating">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <span>( 138 reviews )</span>
+                        @for ($i = 0; $i < $avgRating; $i++)
+                            <i class="fa fa-star"></i>
+                        @endfor
+
+                        <span>( {{$product->reviews->count()}} reviews )</span>
+
                     </div>
-                    <div class="product__details__price">$ 75.0 <span>$ 83.0</span></div>
+                    <div class="product__details__price">$ {{$product->price}}<span>$ 83.0</span></div>
                     <p>Nemo enim ipsam voluptatem quia aspernatur aut odit aut loret fugit, sed quia consequuntur
                     magni lores eos qui ratione voluptatem sequi nesciunt.</p>
                     <div class="product__details__button">
@@ -79,48 +147,30 @@
                                 <span>Availability:</span>
                                 <div class="stock__checkbox">
                                     <label for="stockin">
-                                        In Stock
+                                        {{$product->quantity ? 'In Stock' : 'Out Of Stock'}}
                                         <input type="checkbox" id="stockin">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
                             </li>
                             <li>
-                                <span>Available color:</span>
+                                <span>Color:</span>
                                 <div class="color__checkbox">
                                     <label for="red">
-                                        <input type="radio" name="color__radio" id="red" checked>
-                                        <span class="checkmark"></span>
+                                        {{-- <input type="radio" name="color__radio" id="" checked> --}}
+                                        <span class="checkmark" style="background: {{$product->color->code}}"></span>
                                     </label>
-                                    <label for="black">
-                                        <input type="radio" name="color__radio" id="black">
-                                        <span class="checkmark black-bg"></span>
-                                    </label>
-                                    <label for="grey">
-                                        <input type="radio" name="color__radio" id="grey">
-                                        <span class="checkmark grey-bg"></span>
-                                    </label>
+
                                 </div>
                             </li>
                             <li>
-                                <span>Available size:</span>
+                                <span>Size:</span>
                                 <div class="size__btn">
                                     <label for="xs-btn" class="active">
-                                        <input type="radio" id="xs-btn">
-                                        xs
+                                        {{-- <input type="radio" id="xs-btn"> --}}
+                                        {{$product->size->code}}
                                     </label>
-                                    <label for="s-btn">
-                                        <input type="radio" id="s-btn">
-                                        s
-                                    </label>
-                                    <label for="m-btn">
-                                        <input type="radio" id="m-btn">
-                                        m
-                                    </label>
-                                    <label for="l-btn">
-                                        <input type="radio" id="l-btn">
-                                        l
-                                    </label>
+
                                 </div>
                             </li>
                             <li>
@@ -131,6 +181,59 @@
                     </div>
                 </div>
             </div>
+            @if(Session::get('loginId'))
+                @php
+                    $userId = Session::get('loginId'); // get the current user's ID
+                    $productId = $product->id; // replace with the ID of the product you want to check
+
+                    $review = DB::table('reviews')
+                        ->where('user_id', $userId)
+                        ->where('product_id', $productId)
+                        ->first();
+
+                    $reviewExists = false;
+                    if ($review->id) {
+                        $reviewExists = true;
+                    };
+                @endphp
+                @if ($reviewExists)
+                    <div class="col-12 mt-5">
+                        <form action={{route('edit-review')}} method="POST">
+                            @csrf
+                            <div class="rating-box">
+                                <input type="hidden" name="review_id" value={{$review->id}}>
+                                <h3>Leave a review</h3>
+                                <div class="stars">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <input type="radio" id="star{{$i}}" {{$review->rating == $i ? 'checked' : ''}} name="rating" value="{{$i}}">
+                                        <label for="star{{$i}}"><i class="fas fa-star {{$review->rating >= $i ? 'active' : ''}}"></i></label>
+                                    @endfor
+                                </div>
+                                <textarea class="w-100 my-4" name="comment" id="" cols="30" rows="4" placeholder="Leave a comment!">{{$review->comment}}</textarea>
+                                <button class="cart-btn-2" type="submit">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                @else
+                    <div class="col-12 mt-5">
+                        <form action={{route('add-review')}} method="POST">
+                            @csrf
+                            <div class="rating-box">
+                                <input type="hidden" name="product_id" value={{$product->id}}>
+                                <h3>Leave a review</h3>
+                                <div class="stars">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <input type="radio" id="star{{$i}}" name="rating" value="{{$i}}">
+                                        <label for="star{{$i}}"><i class="fas fa-star"></i></label>
+                                    @endfor
+                                </div>
+                                <textarea class="w-100 my-4" name="comment" id="" cols="30" rows="4" placeholder="Leave a comment!"></textarea>
+                                <button class="cart-btn-2" type="submit">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                @endif
+            @endif
             <div class="col-lg-12">
                 <div class="product__details__tab">
                     <ul class="nav nav-tabs" role="tablist">
@@ -345,4 +448,22 @@
     </div>
 </div>
 <!-- Instagram End -->
+<script>
+// ---- ---- Const ---- ---- //
+const stars = document.querySelectorAll('.stars i');
+const starsNone = document.querySelector('.rating-box');
+
+// ---- ---- Stars ---- ---- //
+stars.forEach((star, index1) => {
+  star.addEventListener('click', () => {
+    stars.forEach((star, index2) => {
+      // ---- ---- Active Star ---- ---- //
+      index1 >= index2
+        ? star.classList.add('active')
+        : star.classList.remove('active');
+    });
+  });
+});
+
+</script>
 @endsection

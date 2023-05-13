@@ -58,10 +58,6 @@ class Product extends Controller
         return view('shop', compact('products', 'categories', 'colors', 'sizes', 'prices', 'selectedSizes', 'selectedColors'));
     }
 
-    public function productDetails()
-    {
-        return view('productDetails');
-    }
 
     public function getIds($category_id, &$ids = []) {
         $category = Category::where('id', $category_id)->first();
@@ -70,6 +66,12 @@ class Product extends Controller
             $this->getIds($category->parent_id, $ids);
         }
         return $ids;
+    }
+
+    public function productDetails($id)
+    {
+        $product = ProductModel::where('id', $id)->first();
+        return view('product-details', compact('product'));
     }
 
 
