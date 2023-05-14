@@ -17,15 +17,20 @@ class Product extends Controller
         $products = null;
 
         if($request->has('category_id')){
-            $chainIds = $this->getIds($request->get('category_id'));
-            $chainIds[] = (int) $request->get('category_id');
+            // $chainIds = $this->getIds($request->get('category_id'));
+            // $chainIds[] = (int) $request->get('category_id');
+            $categoryId = $request->get('category_id');
+            $category = Category::find($categoryId);
+            $descendants = $category->getAllDescendants()->pluck('id');
+            $products = ProductModel::whereIn('category_id', $descendants->push($categoryId));
+
+            // dd($category->descendants);
 
             // $products = ProductModel::where(function ($query) use ($chainIds) {
             //     foreach ($chainIds as $category_id) {
             //         $query->where('category_id', $category_id);
             //     }
             // });
-            $products = ProductModel::whereIn('category_id', $chainIds);
         }
         if($products && $request->has('size')){
             $products = $products->whereIn('size_id', $selectedSizes);
@@ -71,8 +76,8 @@ class Product extends Controller
     public function productDetails($id)
     {
         $product = ProductModel::where('id', $id)->first();
-       // dd(  $product);
-        return view('product-details', compact('product'));
+        $relatedProducts = ProductModel::where('category_id', $product->category_id)->where('id','!=',$product->id)->limit(4)->get();
+        return view('product-details', compact('product', 'relatedProducts'));
     }
 
 

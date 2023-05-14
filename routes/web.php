@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Cart;
 use App\Http\Controllers\User;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Review;
@@ -38,6 +39,11 @@ Route::post('/update-user-data', [User::class, 'updateUser'])->name('update-user
 Route::get('/shop', [Product::class, 'shop'])->name('shop');
 Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-details');
 
+Route::get('/cart', [Cart::class, 'cart'])->name('cart');
+Route::post('/add-to-cart', [Cart::class, 'addToCart'])->name('add-to-cart');
+
+
+
 
 Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
 Route::post('/edit-review', [Review::class, 'editReview'])->name('edit-review');
@@ -48,6 +54,9 @@ Route::controller(GoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
+
+
+
 
 
 // admin routes
