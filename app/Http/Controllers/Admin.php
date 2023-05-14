@@ -363,4 +363,85 @@ class Admin extends Controller
             return back()->with('fail', 'Something went wrong');
         }
     }
+
+    //  COLOR MENAGE 
+
+
+    public function colors(){
+        $colors = Color::all()->sortByDesc('id');
+        return view('admin.colors.colors', compact('colors'));
+    }
+
+    public function addColor(){
+        return view('admin.colors.form');
+    }
+
+    public function createColor(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'code' => 'required',
+        ]);
+
+        $color = new Color();
+        $color->name = $request->input('name');
+        $color->code = $request->input('code');
+        
+        $result = $color->save();
+
+        if($result) {
+            return redirect('admin/colors')->with('success', 'You have created a color successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function updateColor(int $id){
+        $color = Color::where('id', $id)->first();
+        return view('admin.colors.form', compact('color'));
+    }
+
+    public function storeColor(Request $request)
+    {
+        $color = Color::where('id',$request->color_id)->first();
+        if(
+            $request->name == $color->name &&
+            $request->code == $color->code
+        )
+        {
+            return back()->with('success', 'Nothing changed!');
+        }
+
+        $validatedData =   $request->validate([
+            'name' => 'required',
+            'code' => 'required',
+           
+        ]);
+
+        $result = $color->update($validatedData);
+        //$color->save();
+
+        if($result) {
+            return redirect('admin/colors')->with('success', 'You have updated a user successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+
+    }
+
+    public function deleteColor(Request $request)
+    {
+        if($request->has('color_id')){
+            $color = Color::where('id',$request->color_id)->first();
+            $result = $color->delete();
+            if($result) {
+                return redirect('admin/colors')->with('success', 'You have deleted a color successfully');
+            }else {
+                return back()->with('fail', 'Something went wrong');
+            }
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+
 }

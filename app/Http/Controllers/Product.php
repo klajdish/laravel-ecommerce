@@ -71,6 +71,7 @@ class Product extends Controller
     public function productDetails($id)
     {
         $product = ProductModel::where('id', $id)->first();
+       // dd(  $product);
         return view('product-details', compact('product'));
     }
 

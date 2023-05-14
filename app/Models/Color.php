@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Color extends Model
 {
     protected $table = 'color';
+    protected $guarded = ['id'];
+
     use HasFactory;
 
     public function products(): HasMany

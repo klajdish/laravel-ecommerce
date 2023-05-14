@@ -181,7 +181,9 @@
                     </div>
                 </div>
             </div>
-            @if(Session::get('loginId'))
+            
+         
+             @if(Session::get('loginId'))
                 @php
                     $userId = Session::get('loginId'); // get the current user's ID
                     $productId = $product->id; // replace with the ID of the product you want to check
@@ -192,7 +194,7 @@
                         ->first();
 
                     $reviewExists = false;
-                    if ($review->id) {
+                    if ($review && $review->id) {
                         $reviewExists = true;
                     };
                 @endphp
@@ -233,7 +235,7 @@
                         </form>
                     </div>
                 @endif
-            @endif
+            @endif 
             <div class="col-lg-12">
                 <div class="product__details__tab">
                     <ul class="nav nav-tabs" role="tablist">
