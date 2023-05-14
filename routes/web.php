@@ -87,12 +87,12 @@ Route::controller(Admin::class)->group(function(){
     Route::get('/admin/color/delete', 'deleteColor')->name('admin.color.delete')->middleware('adminCheck');
 
     //SIZES
-    // Route::get('admin/colors', 'colors')->name('admin.colors')->middleware('adminCheck');
-    // Route::get('/admin/color/add', 'addColor')->name('admin.color.add')->middleware('adminCheck');
-    // Route::post('/admin/color/add', 'createColor')->name('admin.color.add')->middleware('adminCheck');
-    // Route::get('/admin/color/update/{id}', 'updateColor')->name('admin.color.update')->middleware('adminCheck');
-    // Route::post('/admin/color/store', 'storeColor')->name('admin.color.store')->middleware('adminCheck');
-    // Route::get('/admin/color/delete', 'deleteColor')->name('admin.color.delete')->middleware('adminCheck');
+    Route::get('admin/sizes', 'sizes')->name('admin.sizes')->middleware('adminCheck');
+    Route::get('/admin/size/add', 'addSize')->name('admin.size.add')->middleware('adminCheck');
+    Route::post('/admin/size/add', 'createSize')->name('admin.size.add')->middleware('adminCheck');
+    Route::get('/admin/size/update/{id}', 'updateSize')->name('admin.size.update')->middleware('adminCheck');
+    Route::post('/admin/size/store', 'storeSize')->name('admin.size.store')->middleware('adminCheck');
+    Route::get('/admin/size/delete', 'deleteSize')->name('admin.size.delete')->middleware('adminCheck');
 
 
 });

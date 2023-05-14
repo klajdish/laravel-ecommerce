@@ -25,6 +25,8 @@ class Admin extends Controller
             'users' => User::count(),
             'products' => Product::count(),
             'categories' => Category::count(),
+            'colors' => Color::count(),
+            'sizes' =>Size::count()
         ];
 
         return view('admin.dashboard', compact('countRecords'));
@@ -443,5 +445,80 @@ class Admin extends Controller
         }
     }
 
+    //SIZES 
+    public function sizes(){
+        $sizes = Size::all()->sortByDesc('id');
+        return view('admin.sizes.sizes', compact('sizes'));
+    }
+
+    public function addSize(){
+        return view('admin.sizes.form');
+    }
+    
+    public function createSize(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'code' => 'required',
+        ]);
+
+        $size = new Size();
+        $size->name = $request->input('name');
+        $size->code = $request->input('code');
+        
+        $result = $size->save();
+
+        if($result) {
+            return redirect('admin/sizes')->with('success', 'You have created a size successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function updateSize(int $id){
+        $size = Size::where('id', $id)->first();
+        return view('admin.sizes.form', compact('size'));
+    }
+
+    public function storeSize(Request $request)
+    {
+        $size = Size::where('id',$request->size_id)->first();
+        if(
+            $request->name == $size->name &&
+            $request->code == $size->code
+        )
+        {
+            return back()->with('success', 'Nothing changed!');
+        }
+
+        $validatedData =   $request->validate([
+            'name' => 'required',
+            'code' => 'required',
+        ]);
+
+        $result = $size->update($validatedData);
+        //$color->save();
+
+        if($result) {
+            return redirect('admin/sizes')->with('success', 'You have updated a size successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+
+    }
+
+    public function deleteSize(Request $request)
+    {
+        if($request->has('size_id')){
+            $size = Size::where('id',$request->size_id)->first();
+            $result = $size->delete();
+            if($result) {
+                return redirect('admin/sizes')->with('success', 'You have deleted a size successfully');
+            }else {
+                return back()->with('fail', 'Something went wrong');
+            }
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
 
 }
