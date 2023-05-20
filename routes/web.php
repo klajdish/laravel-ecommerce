@@ -41,8 +41,9 @@ Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-d
 
 Route::get('/cart', [Cart::class, 'cart'])->name('cart');
 Route::post('/add-to-cart', [Cart::class, 'addToCart'])->name('add-to-cart');
+Route::post('/update-cart', [Cart::class, 'updateCart'])->name('update-cart');
 
-Route::get('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->name('cart.delete.item');
+Route::delete('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->name('cart.delete.item');
 
 
 Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
@@ -50,6 +51,7 @@ Route::post('/edit-review', [Review::class, 'editReview'])->name('edit-review');
 Route::delete('/destory-review/{id}', [Review::class, 'destroy'])->name('destory-review');
 
 
+Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
 
 Route::controller(GoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
@@ -101,6 +103,14 @@ Route::controller(Admin::class)->group(function(){
     Route::get('/admin/size/update/{id}', 'updateSize')->name('admin.size.update')->middleware('adminCheck');
     Route::post('/admin/size/store', 'storeSize')->name('admin.size.store')->middleware('adminCheck');
     Route::get('/admin/size/delete', 'deleteSize')->name('admin.size.delete')->middleware('adminCheck');
+
+    //COUPONS
+    Route::get('admin/coupons', 'coupons')->name('admin.coupons')->middleware('adminCheck');
+    Route::get('/admin/coupon/add', 'addCoupon')->name('admin.coupon.add')->middleware('adminCheck');
+    Route::post('/admin/coupon/add', 'createCoupon')->name('admin.coupon.add')->middleware('adminCheck');
+    Route::get('/admin/coupon/update/{id}', 'updateCoupon')->name('admin.coupon.update')->middleware('adminCheck');
+    Route::post('/admin/coupon/store', 'storeCoupon')->name('admin.coupon.store')->middleware('adminCheck');
+    Route::get('/admin/coupon/delete', 'deleteCoupon')->name('admin.coupon.delete')->middleware('adminCheck');
 });
 // end admin routes
 

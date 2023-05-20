@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Size;
 use App\Models\User;
 use App\Models\Color;
+use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\Category;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\User as UserModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 
 class Admin extends Controller
@@ -513,6 +514,87 @@ class Admin extends Controller
             $result = $size->delete();
             if($result) {
                 return redirect('admin/sizes')->with('success', 'You have deleted a size successfully');
+            }else {
+                return back()->with('fail', 'Something went wrong');
+            }
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+
+    //COUPONS
+    public function coupons(){
+        $coupons = Coupon::all()->sortByDesc('id');
+        return view('admin.coupons.coupons', compact('coupons'));
+    }
+
+    public function addCoupon(){
+        return view('admin.coupons.form');
+    }
+
+    public function createCoupon(Request $request){
+        $request->validate([
+            'code' => 'required',
+            'discount' => 'required',
+            'expiration_date' => 'required',
+        ]);
+
+        $coupon = new Coupon();
+        $coupon->code = $request->input('code');
+        $coupon->discount = $request->input('discount');
+        $coupon->expiration_date = $request->input('expiration_date');
+
+        $result = $coupon->save();
+
+        if($result) {
+            return redirect('admin/coupons')->with('success', 'You have created a Coupon successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function updateCoupon(int $id){
+        $coupon = Coupon::where('id', $id)->first();
+        return view('admin.coupons.form', compact('coupon'));
+    }
+
+    public function storeCoupon(Request $request)
+    {
+        $coupon = Coupon::where('id',$request->coupon_id)->first();
+        if(
+            $request->name == $coupon->code &&
+            $request->discount == $coupon->discount &&
+            $request->expiration_date == $coupon->expiration_date
+        )
+        {
+            return back()->with('success', 'Nothing changed!');
+        }
+
+        $validatedData =   $request->validate([
+            'code' => 'required',
+            'discount' => 'required',
+            'expiration_date' => 'required',
+        ]);
+
+        $result = $coupon->update($validatedData);
+        //$color->save();
+
+        if($result) {
+            return redirect('admin/coupons')->with('success', 'You have updated a Coupon successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+
+    }
+
+    public function deleteCoupon(Request $request)
+    {
+        if($request->has('coupon_id')){
+            $coupon = Coupon::where('id',$request->coupon_id)->first();
+            $result = $coupon->delete();
+            if($result) {
+                return redirect('admin/coupons')->with('success', 'You have deleted a Coupon successfully');
             }else {
                 return back()->with('fail', 'Something went wrong');
             }

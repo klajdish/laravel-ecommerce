@@ -73,6 +73,12 @@
                         </i>  Sizes
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow " href="{{route('admin.coupons')}}" >
+                        <i data-feather="package" class="nav-icon icon-xs me-2" >
+                        </i>  Coupons
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
