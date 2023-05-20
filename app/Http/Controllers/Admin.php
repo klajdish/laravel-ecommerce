@@ -366,7 +366,7 @@ class Admin extends Controller
         }
     }
 
-    //  COLOR MENAGE 
+    //  COLOR MENAGE
 
 
     public function colors(){
@@ -387,7 +387,7 @@ class Admin extends Controller
         $color = new Color();
         $color->name = $request->input('name');
         $color->code = $request->input('code');
-        
+
         $result = $color->save();
 
         if($result) {
@@ -416,7 +416,7 @@ class Admin extends Controller
         $validatedData =   $request->validate([
             'name' => 'required',
             'code' => 'required',
-           
+
         ]);
 
         $result = $color->update($validatedData);
@@ -445,7 +445,7 @@ class Admin extends Controller
         }
     }
 
-    //SIZES 
+    //SIZES
     public function sizes(){
         $sizes = Size::all()->sortByDesc('id');
         return view('admin.sizes.sizes', compact('sizes'));
@@ -454,7 +454,7 @@ class Admin extends Controller
     public function addSize(){
         return view('admin.sizes.form');
     }
-    
+
     public function createSize(Request $request){
         $request->validate([
             'name' => 'required',
@@ -464,7 +464,7 @@ class Admin extends Controller
         $size = new Size();
         $size->name = $request->input('name');
         $size->code = $request->input('code');
-        
+
         $result = $size->save();
 
         if($result) {

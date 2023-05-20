@@ -73,75 +73,21 @@
 <script>
 
     $(document).ready(function() {
-
-        $.validator.addMethod("filesize", function(value, element, param) {
-            var size = element.files[0].size;
-            if (size <= param) {
-            return true;
-            } else {
-            return false;
-            }
-        }, "The selected file must be less than or equal to {0} bytes in size.");
-
-      $("#add-product").validate({
+        $("#add-size").validate({
         rules: {
-          barcode: {
-            required: true
-          },
           name: {
             required: true
           },
-          price: {
-            required: true,
-            number: true
-          },
-          quantity: {
-            required: true,
-            number: true
-          },
-          image: {
-            required: true,
-            extension: "jpg|jpeg|png|gif",
-            filesize: 5048576 // 5 MB
-          },
-          category: {
-            required: true
-          },
-          size: {
-            required: true
-          },
-          color: {
+          code: {
             required: true
           }
         },
         messages: {
-          barcode: {
-            required: "Please enter a barcode"
-          },
           name: {
-            required: "Please enter a product name"
+            required: "Please enter a size name"
           },
-          price: {
-            required: "Please enter a price",
-            number: "Please enter a valid price"
-          },
-          quantity: {
-            required: "Please enter a quantity",
-            number: "Please enter a valid quantity"
-          },
-          image: {
-            required: "Please select an image",
-            extension: "Please select a valid image file (jpg, jpeg, png or gif)",
-            filesize: "The image file size must be less than 1 MB"
-          },
-          category: {
-            required: "Please select a category"
-          },
-          size: {
-            required: "Please select a size"
-          },
-          color: {
-            required: "Please select a color"
+          code: {
+            required: "Please choose a size"
           }
         },
         errorPlacement: function(error, element) {
@@ -150,63 +96,21 @@
       });
 
 
-      $("#update-product").validate({
+      $("#update-size").validate({
         rules: {
-          barcode: {
-            required: true
-          },
           name: {
             required: true
           },
-          price: {
-            required: true,
-            number: true
-          },
-          quantity: {
-            required: true,
-            number: true
-          },
-          image: {
-            extension: "jpg|jpeg|png|gif",
-            filesize: 5048576 // 5 MB
-          },
-          category: {
-            required: true
-          },
-          size: {
-            required: true
-          },
-          color: {
+          code: {
             required: true
           }
         },
         messages: {
-          barcode: {
-            required: "Please enter a barcode"
-          },
           name: {
-            required: "Please enter a product name"
+            required: "Please enter a size name"
           },
-          price: {
-            required: "Please enter a price",
-            number: "Please enter a valid price"
-          },
-          quantity: {
-            required: "Please enter a quantity",
-            number: "Please enter a valid quantity"
-          },
-          image: {
-            extension: "Please select a valid image file (jpg, jpeg, png or gif)",
-            filesize: "The image file size must be less than 1 MB"
-          },
-          category: {
-            required: "Please select a category"
-          },
-          size: {
-            required: "Please select a size"
-          },
-          color: {
-            required: "Please select a color"
+          code: {
+            required: "Please choose a size"
           }
         },
         errorPlacement: function(error, element) {

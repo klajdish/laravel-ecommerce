@@ -49,4 +49,12 @@ class Review extends Controller
             return back()->with('fail', 'Something went wrong');
         }
     }
+
+    public function destroy($id)
+    {
+        $review = ReviewModel::findOrFail($id);
+        $review->delete();
+
+        return redirect()->back()->with('success', 'Review deleted successfully');
+    }
 }

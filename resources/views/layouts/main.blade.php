@@ -17,7 +17,7 @@
     rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="http://pweb.com/css/bootstrap.min.css123123123" type="text/css">
+    <link rel="stylesheet" href="http://pweb.com/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="http://pweb.com/css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="http://pweb.com/css/elegant-icons.css" type="text/css">
     <link rel="stylesheet" href="http://pweb.com/css/jquery-ui.min.css" type="text/css">
@@ -194,5 +194,6 @@
 <script src="http://pweb.com/js/owl.carousel.min.js"></script>
 <script src="http://pweb.com/js/jquery.nicescroll.min.js"></script>
 <script src="http://pweb.com/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </html>

@@ -47,6 +47,7 @@ Route::get('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->n
 
 Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
 Route::post('/edit-review', [Review::class, 'editReview'])->name('edit-review');
+Route::delete('/destory-review/{id}', [Review::class, 'destroy'])->name('destory-review');
 
 
 

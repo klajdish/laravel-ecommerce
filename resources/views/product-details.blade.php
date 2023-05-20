@@ -205,36 +205,65 @@
                 @endphp
                 @if ($reviewExists)
                     <div class="col-12 mt-5">
-                        <form action={{route('edit-review')}} method="POST">
+                        <form action={{route('edit-review')}} id="edit-review"  method="POST">
                             @csrf
                             <div class="rating-box">
                                 <input type="hidden" name="review_id" value={{$review->id}}>
-                                <h3>Leave a review</h3>
+                                <div class="d-flex justify-content-end">
+                                    <div class="col-7 d-flex justify-content-between">
+                                        <h3>Leave a review</h3>
+                                        <a href="{{ route('destory-review', $review->id) }}"
+                                            class="delete-review text-danger"
+                                            onclick="event.preventDefault(); deleteReview(event)">
+                                            Delete Review
+                                         </a>
+                                    </div>
+                                </div>
                                 <div class="stars">
                                     @for ($i = 1; $i <= 5; $i++)
-                                        <input type="radio" id="star{{$i}}" {{$review->rating == $i ? 'checked' : ''}} name="rating" value="{{$i}}">
+                                        <input type="radio" id="star{{$i}}" {{$review->rating == $i ? 'checked' : ''}} name="rating" id="rating" value="{{$i}}">
                                         <label for="star{{$i}}"><i class="fas fa-star {{$review->rating >= $i ? 'active' : ''}}"></i></label>
                                     @endfor
                                 </div>
-                                <textarea class="w-100 my-4" name="comment" id="" cols="30" rows="4" placeholder="Leave a comment!">{{$review->comment}}</textarea>
+                                <span  id="rating-error" class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                                    @error('rating')
+                                        {{$message}}
+                                    @enderror
+                                </span>
+                                <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!">{{$review->comment}}</textarea>
+                                <span  id="rating-error" class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                                    @error('comment')
+                                        {{$message}}
+                                    @enderror
+                                </span>
                                 <button class="cart-btn-2" type="submit">Update</button>
                             </div>
                         </form>
                     </div>
                 @else
                     <div class="col-12 mt-5">
-                        <form action={{route('add-review')}} method="POST">
+                        <form action={{route('add-review')}} id="add-review" method="POST">
                             @csrf
                             <div class="rating-box">
                                 <input type="hidden" name="product_id" value={{$product->id}}>
                                 <h3>Leave a review</h3>
                                 <div class="stars">
                                     @for ($i = 1; $i <= 5; $i++)
-                                        <input type="radio" id="star{{$i}}" name="rating" value="{{$i}}">
+                                        <input type="radio" id="star{{$i}}" name="rating" id="rating" value="{{$i}}">
                                         <label for="star{{$i}}"><i class="fas fa-star"></i></label>
                                     @endfor
                                 </div>
-                                <textarea class="w-100 my-4" name="comment" id="" cols="30" rows="4" placeholder="Leave a comment!"></textarea>
+                                <span  id="rating-error" class="text-danger d-flex text-start my-1 error-msg">
+                                    @error('rating')
+                                        {{$message}}
+                                    @enderror
+                                </span>
+                                <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!"></textarea>
+                                <span  id="rating-error" class="text-danger d-flex text-start my-1 error-msg">
+                                    @error('comment')
+                                        {{$message}}
+                                    @enderror
+                                </span>
                                 <button class="cart-btn-2" type="submit">Submit</button>
                             </div>
                         </form>
@@ -349,6 +378,106 @@ stars.forEach((star, index1) => {
         : star.classList.remove('active');
     });
   });
+});
+
+
+function deleteReview(event) {
+    event.preventDefault();
+
+    // Get the delete URL from the link's href attribute
+    const deleteUrl = event.target.getAttribute('href');
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Once deleted, you will not be able to recover this review!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If confirmed, submit the delete form
+            const form = document.createElement('form');
+            form.action = deleteUrl;
+            form.method = 'POST';
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+$(document).ready(function() {
+
+    $("#add-review").validate({
+    rules: {
+        rating: {
+            required: true
+        },
+        comment: {
+            nullable: true,
+            string: true,
+            minlength: 5,
+            maxlength: 150
+        }
+    },
+    messages: {
+        rating: {
+            required: "Please provide a rating"
+        },
+        comment: {
+            nullable: "The comment field is optional",
+            string: "Please enter a valid comment",
+            minlength: "The comment must be at least 5 characters long",
+            maxlength: "The comment cannot exceed 150 characters"
+        }
+    },
+    errorPlacement: function(error, element) {
+        error.appendTo(element.siblings('.invalid-feedback'));
+    },
+    submitHandler: function(form) {
+        // Form submission logic goes here
+        form.submit(); // Submit the form
+    }
+});
+
+
+
+    $("#edit-review").validate({
+    rules: {
+        rating: {
+            required: true
+        },
+        comment: {
+            nullable: true,
+            string: true,
+            minlength: 5,
+            maxlength: 150
+        },
+        errorPlacement: function(error, element) {
+            error.appendTo(element.siblings('.invalid-feedback'));
+        }
+    },
+    messages: {
+        rating: {
+            required: "Please provide a rating"
+        },
+        comment: {
+            nullable: "The comment field is optional",
+            string: "Please enter a valid comment",
+            minlength: "The comment must be at least 5 characters long",
+            maxlength: "The comment cannot exceed 150 characters"
+        },
+        errorPlacement: function(error, element) {
+            error.appendTo(element.siblings('.invalid-feedback'));
+        }
+    }
+});
 });
 
 </script>
