@@ -108,7 +108,7 @@ class User extends Controller
                 $request->session()->put('userRole', $user->role);
                 return redirect('profile')->with('success', 'You have logged in successfully');
             }else {
-                return back()->with('fail', 'Something went wrong'); //
+                return back()->with('fail', 'Something went wrong'); 
             }
         }else {
             return back()->with('fail', 'Something went wrong');

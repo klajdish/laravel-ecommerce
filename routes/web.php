@@ -42,7 +42,7 @@ Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-d
 Route::get('/cart', [Cart::class, 'cart'])->name('cart');
 Route::post('/add-to-cart', [Cart::class, 'addToCart'])->name('add-to-cart');
 
-
+Route::get('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->name('cart.delete.item');
 
 
 Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
@@ -54,8 +54,6 @@ Route::controller(GoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
     Route::get('auth/google/callback', 'handleGoogleCallback');
 });
-
-
 
 
 
@@ -102,8 +100,6 @@ Route::controller(Admin::class)->group(function(){
     Route::get('/admin/size/update/{id}', 'updateSize')->name('admin.size.update')->middleware('adminCheck');
     Route::post('/admin/size/store', 'storeSize')->name('admin.size.store')->middleware('adminCheck');
     Route::get('/admin/size/delete', 'deleteSize')->name('admin.size.delete')->middleware('adminCheck');
-
-
 });
 // end admin routes
 

@@ -21,7 +21,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-
     public function size(): BelongsTo
     {
         return $this->belongsTo(Size::class);
@@ -35,6 +34,11 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->belongsTo(CartItem::class);
     }
 
 }

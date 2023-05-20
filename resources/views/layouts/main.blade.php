@@ -1,3 +1,7 @@
+@php
+    use App\Models\User;
+
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,8 +99,16 @@
                         @endif
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span>
-                                <div class="tip">2</div>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
+                                @if(Session::has('loginId'))
+                                    @php
+                                    $user = User::Where('id', Session::get('loginId'))->first();
+                                    if($user){
+                                        $cartItemProductsCount = $user->cart->cartItems()->count();
+                                    }
+                                    @endphp
+                                <div class="tip">{{$cartItemProductsCount}}</div>
+                                @endif
                             </a></li>
                         </ul>
                     </div>
