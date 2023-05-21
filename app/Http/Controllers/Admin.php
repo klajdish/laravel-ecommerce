@@ -184,6 +184,7 @@ class Admin extends Controller
         $request->validate([
             'barcode' => 'required',
             'name' => 'required',
+            'description' => 'required|min:10|max:200',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'image' => 'required|image|max:5048',
@@ -195,6 +196,7 @@ class Admin extends Controller
         $product = new Product();
         $product->barcode = $request->input('barcode');
         $product->name = $request->input('name');
+        $product->description = $request->input('description');
         $product->price = $request->input('price');
         $product->quantity = $request->input('quantity');
         $product->category_id = $request->input('category');
@@ -229,6 +231,7 @@ class Admin extends Controller
         if(
             $request->barcode == $product->barcode &&
             $request->name == $product->name &&
+            $request->description == $product->description &&
             $request->price == $product->price &&
             $request->quantity == $product->quantity &&
             $request->size == $product->size_id &&
@@ -243,6 +246,7 @@ class Admin extends Controller
         $validatedData =   $request->validate([
             'barcode' => 'required',
             'name' => 'required',
+            'description' => 'required|min:10|max:500',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'image' => 'image|max:5048',
@@ -268,7 +272,7 @@ class Admin extends Controller
         $product->save();
 
         if($result) {
-            return redirect('admin/products')->with('success', 'You have updated a user successfully');
+            return redirect('admin/products')->with('success', 'You have updated a product successfully');
         }else {
             return back()->with('fail', 'Something went wrong');
         }

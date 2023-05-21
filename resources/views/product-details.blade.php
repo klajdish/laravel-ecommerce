@@ -110,7 +110,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="product__details__text">
-                    <h3>{{$product->name}} <span>Barcode: {{$product->barcode}}</span></h3>
+                    <h3>{{$product->name}} <span>BARCODE: {{$product->barcode}}</span></h3>
 
                    @php
                        $avgRating=round($product->reviews->avg('rating'));
@@ -129,35 +129,44 @@
                         <span>( {{$product->reviews->count()}} reviews )</span>
 
                     </div>
-                    <div class="product__details__price">$ {{$product->price}}<span>$ 83.0</span></div>
-                    <p>Nemo enim ipsam voluptatem quia aspernatur aut odit aut loret fugit, sed quia consequuntur
-                    magni lores eos qui ratione voluptatem sequi nesciunt.</p>
-                    <div class="product__details__button">
-                        <form action="{{route('add-to-cart')}}" method="POST">
-                        @csrf
-                            <input type="hidden" name="product_id" value="{{$product->id}}">
-                            <div class="quantity">
-                                <span>Quantity:</span>
-                                <div class="pro-qty">
-                                    <input type="text" name="quantity" value="1">
-                                </div>
-                            </div>
-
-                            <button type="submit" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</button>
-
-                        </form>
-                        {{-- <ul>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
-                        </ul> --}}
+                    <div class="product__details__price">$
+                        {{$product->price}}
+                        {{-- <span>$ 83.0</span> --}}
                     </div>
+                    <p>
+                        {{ strlen($product->description) > 140 ? substr($product->description, 0, 140) . '..' : $product->description}}
+                    </p>
+                    @if ($product->quantity)
+                        <div class="product__details__button">
+                            <form action="{{route('add-to-cart')}}" id="add-to-cart" method="POST">
+                            @csrf
+                                <input type="hidden" name="product_id" value="{{$product->id}}">
+                                <div class="quantity">
+                                    <span>Quantity:</span>
+                                    <div class="pro-qty">
+                                        <input type="text" name="quantity" id="quantity" value="1">
+                                    </div>
+                                </div>
+                                <button type="submit" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</button>
+                            </form>
+                            {{-- <ul>
+                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+                            </ul> --}}
+                        </div>
+                        <div class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                            @error('quantity')
+                                {{$message}}
+                            @enderror
+                        </div>
+                    @endif
                     <div class="product__details__widget">
                         <ul>
                             <li>
                                 <span>Availability:</span>
                                 <div class="stock__checkbox">
                                     <label  class="pl-0" for="stockin">
-                                        {{$product->quantity ? 'In Stock' : 'Out Of Stock'}}
+                                        {{$product->quantity ? 'In Stock (' . $product->quantity .')'  : 'Out Of Stock'}}
                                     </label>
                                 </div>
                             </li>
@@ -228,12 +237,14 @@
                                         {{$message}}
                                     @enderror
                                 </span>
-                                <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!">{{$review->comment}}</textarea>
-                                <span  id="rating-error" class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
-                                    @error('comment')
-                                        {{$message}}
-                                    @enderror
-                                </span>
+                                <div>
+                                    <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!">{{$review->comment}}</textarea>
+                                    <div class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                                        @error('comment')
+                                            {{$message}}
+                                        @enderror
+                                    </div>
+                                </div>
                                 <button class="cart-btn-2" type="submit">Update</button>
                             </div>
                         </form>
@@ -256,12 +267,14 @@
                                         {{$message}}
                                     @enderror
                                 </span>
-                                <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!"></textarea>
-                                <span  id="rating-error" class="text-danger d-flex text-start my-1 error-msg">
-                                    @error('comment')
-                                        {{$message}}
-                                    @enderror
-                                </span>
+                                <div>
+                                    <textarea class="w-100 my-3" name="comment" id="comment" cols="30" rows="4" placeholder="Leave a comment!"></textarea>
+                                    <div class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                                        @error('comment')
+                                            {{$message}}
+                                        @enderror
+                                    </div>
+                                </div>
                                 <button class="cart-btn-2" type="submit">Submit</button>
                             </div>
                         </form>
@@ -281,16 +294,9 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <h6>Description</h6>
-                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
-                                quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
-                                Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
-                                voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
-                                consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
-                            consequat massa quis enim.</p>
-                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
-                                dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
-                                nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-                            quis, sem.</p>
+                            <p>
+                                {{$product->description}}
+                            </p>
                         </div>
                         <div class="tab-pane" id="tabs-2" role="tabpanel">
                             <h6>Reviews ( {{$product->reviews->count()}})</h6>
@@ -337,7 +343,7 @@
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a href="#">{{$relatedProduct->name}}</a></h6>
+                            <h6><a href="{{route('product-details', $relatedProduct->id)}}">{{$relatedProduct->name}}</a></h6>
                             <div class="rating">
                                 @php
                                     $avgRating=round($relatedProduct->reviews->avg('rating'));
@@ -418,8 +424,6 @@ $(document).ready(function() {
             required: true
         },
         comment: {
-            nullable: true,
-            string: true,
             minlength: 5,
             maxlength: 150
         }
@@ -429,8 +433,6 @@ $(document).ready(function() {
             required: "Please provide a rating"
         },
         comment: {
-            nullable: "The comment field is optional",
-            string: "Please enter a valid comment",
             minlength: "The comment must be at least 5 characters long",
             maxlength: "The comment cannot exceed 150 characters"
         }
@@ -446,19 +448,14 @@ $(document).ready(function() {
 
 
 
-    $("#edit-review").validate({
+$("#edit-review").validate({
     rules: {
         rating: {
             required: true
         },
         comment: {
-            nullable: true,
-            string: true,
             minlength: 5,
             maxlength: 150
-        },
-        errorPlacement: function(error, element) {
-            error.appendTo(element.siblings('.invalid-feedback'));
         }
     },
     messages: {
@@ -466,16 +463,45 @@ $(document).ready(function() {
             required: "Please provide a rating"
         },
         comment: {
-            nullable: "The comment field is optional",
-            string: "Please enter a valid comment",
             minlength: "The comment must be at least 5 characters long",
             maxlength: "The comment cannot exceed 150 characters"
         },
-        errorPlacement: function(error, element) {
-            error.appendTo(element.siblings('.invalid-feedback'));
-        }
+    },
+    errorPlacement: function(error, element) {
+        error.appendTo(element.siblings('.invalid-feedback'));
     }
 });
+
+$('#add-to-cart').validate({
+    rules: {
+        quantity: {
+            required: true,
+            digits: true,
+            remote: {
+                url: "{{ route('check-quantity') }}",
+                type: "POST",
+                data: {
+                    quantity: function() {
+                        return $('#quantity').val();
+                    },
+                    'product_id': '{{$product->id}}',
+                }
+            }
+        }
+    },
+    messages: {
+        quantity: {
+            required: "Please enter a quantity",
+            digits: "Please enter a valid quantity",
+            remote: "Quantity exceeds the available quantity."
+        }
+    },
+    errorPlacement: function(error, element) {
+        error.appendTo(element.parent().parent().parent().parent().siblings('.invalid-feedback'));
+    }
+});
+
+
 });
 
 </script>

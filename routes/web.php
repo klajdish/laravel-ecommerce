@@ -44,6 +44,9 @@ Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-d
 Route::get('/cart', [Cart::class, 'cart'])->name('cart');
 Route::post('/add-to-cart', [Cart::class, 'addToCart'])->name('add-to-cart');
 Route::post('/update-cart', [Cart::class, 'updateCart'])->name('update-cart');
+Route::post('/check-quantity', [Cart::class, 'checkQuantity'])->name('check-quantity');
+
+
 Route::delete('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->name('cart.delete.item');
 Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
 
@@ -121,7 +124,7 @@ Route::controller(Admin::class)->group(function(){
     Route::get('/admin/coupon/update/{id}', 'updateCoupon')->name('admin.coupon.update')->middleware('adminCheck');
     Route::post('/admin/coupon/store', 'storeCoupon')->name('admin.coupon.store')->middleware('adminCheck');
     Route::get('/admin/coupon/delete', 'deleteCoupon')->name('admin.coupon.delete')->middleware('adminCheck');
-    
+
     //Order Status
     // Route::get('admin/coupons', 'coupons')->name('admin.coupons')->middleware('adminCheck');
     // Route::get('/admin/coupon/add', 'addCoupon')->name('admin.coupon.add')->middleware('adminCheck');

@@ -51,6 +51,25 @@ class Cart extends Controller
     {
 
         if(Session::get('loginId')){
+            $cart = CartModel::where('user_id',Session::get('loginId'))->first();
+
+            $request->validate([
+                'quantity' => [
+                    function ($attribute, $value, $fail) use ($request, $cart) {
+                        $quantity = $value;
+                        $product = Product::where('id', $request->product_id)->first();
+
+                        $availableQuantity = $product->quantity;
+                        $cartItem = $cart->cartItems()->where('product_id', $request->product_id)->first();
+
+                        if ($quantity <= 0 || $quantity > $availableQuantity) {
+                            $fail('Quantity exceeds the available quantity.');
+                        }else if($cartItem && $cartItem->quantity + $quantity > $availableQuantity){
+                            $fail('The combined quantity with the cart item has exceeds the available quantity.');
+                        }
+                    }
+                ]
+            ]);
 
             $cart = CartModel::where('user_id',Session::get('loginId'))->first();
 
@@ -87,6 +106,7 @@ class Cart extends Controller
 
     public function updateCart(Request $request)
     {
+        $quantityErrors = [];
         $productIds = $request->input('product_ids');
         $quantities = $request->input('quantities');
 
@@ -99,13 +119,25 @@ class Cart extends Controller
 
             if ($cartItem) {
                 // Update the quantity in the cart_items table
-                $cartItem->quantity = $newQuantity;
-                $cartItem->save();
+                $product = Product::where('id', $productId)->first();
+                if($newQuantity > $product->quantity) {
+                    $quantityErrors[$productId] = true;
+
+                }else {
+                    if(empty($quantityErrors)){
+                        $cartItem->quantity = $newQuantity;
+                        $cartItem->save();
+                    }
+                }
             }
         }
+        session()->flash('quantityErrors', $quantityErrors);
+        if(empty($quantityErrors)){
+            session()->flash('success', 'Success! You updated your cart.');
+            return response()->json(['success' => true]);
 
-        session()->flash('success', 'Success! You updated your cart.');
-        return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
     }
 
     public function applyDiscount(Request $request)
@@ -137,5 +169,20 @@ class Cart extends Controller
         return redirect('cart')->with('fail', 'This coupon has expired or does not exist');
 
 
+    }
+
+    public function checkQuantity(Request $request)
+    {
+        $quantity = $request->input('quantity');
+        $product = Product::where('id', $request->input('product_id'))->first();
+
+        $availableQuantity = $product->quantity;
+
+        if ($quantity <= 0 || $quantity > $availableQuantity) {
+            return response()->json(false); //shfaq error
+        }
+
+        // Valid quantity
+        return response()->json(true); //mos shfaq error
     }
 }

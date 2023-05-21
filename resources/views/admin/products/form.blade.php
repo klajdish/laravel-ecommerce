@@ -57,7 +57,15 @@
                                 @enderror
                             </div>
                         </div>
-                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea id="" cols="30" rows="5" id="description" class="form-control" name="description" placeholder="">{{isset($product) ? $product->description : old('description')}}</textarea>
+                            <div class="invalid-feedback d-block">
+                               @error('description')
+                                    {{$message}}
+                                @enderror
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">Price</label>
                             <input value="{{isset($product) ? $product->price : old('price')}}" type="number" id="price" class="form-control" name="price" placeholder="">
@@ -165,6 +173,11 @@
           name: {
             required: true
           },
+          description: {
+            required: true,
+            minlength: 10,
+            maxlength: 500
+          },
           price: {
             required: true,
             number: true
@@ -194,6 +207,9 @@
           },
           name: {
             required: "Please enter a product name"
+          },
+          description: {
+            required: "Please enter a product description"
           },
           price: {
             required: "Please enter a price",
@@ -231,6 +247,11 @@
           },
           name: {
             required: true
+          },
+          description: {
+            required: true,
+            minlength: 10,
+            maxlength: 500
           },
           price: {
             required: true,

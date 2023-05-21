@@ -1,4 +1,9 @@
 @extends('layouts.main')
+<style>
+    .nav::before, .nav::after {
+        content: none !important;
+    }
+</style>
 @section('content')
     <div class="container">
         <div class="row gap-3">

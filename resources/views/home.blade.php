@@ -73,21 +73,26 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mix women">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" data-setbg="{{asset($product->image)}}">
-                            <div class="label new">New</div>
+                            {{-- <div class="label new">New</div> --}}
                             <ul class="product__hover">
-                                <li><a href="{{asset($product->image)}}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                <li><a href="img/product/related/rp-1.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
                                 <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                                 <li><a href="#"><span class="icon_bag_alt"></span></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a href="#">{{$product->name}}</a></h6>
+                            <h6><a href="{{route('product-details', $product->id)}}">{{$product->name}}</a></h6>
                             <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
+                                @php
+                                    $avgRating=round($product->reviews->avg('rating'));
+                                @endphp
+                                @for ($i = 0; $i < $avgRating; $i++)
+                                    <i class="fa fa-star" style="color:#ffb851"></i>
+                                @endfor
+
+                                @for ($i = 0; $i < 5 - $avgRating; $i++)
+                                    <i class="fa fa-star" style="color: #888383" ></i>
+                                @endfor
                             </div>
                             <div class="product__price">{{$product->price}}</div>
                         </div>

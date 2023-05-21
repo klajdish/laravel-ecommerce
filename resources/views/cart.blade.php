@@ -117,6 +117,11 @@
                                         <div class="pro-qty">
                                             <input type="text" class="quantity-input" data-product-id="{{ $product->id }}" value="{{$user->cart->cartItems()->where('product_id',$product->id)->first()->quantity}}">
                                         </div>
+                                        @if (session('quantityErrors') && isset(session('quantityErrors')[$product->id]))
+                                            <div class="invalid-feedback text-danger text-start my-1 d-flex error-msg">
+                                                Quantity exceeds the available quantity.
+                                            </div>
+                                        @endif
                                     </td>
                                     @php
                                         $quantity = $user->cart->cartItems()->Where('product_id',$product->id)->first()->quantity;

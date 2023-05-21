@@ -1,5 +1,34 @@
 @extends('layouts.main')
 @section('content')
+<style>
+/* Custom styles */
+.search-input {
+    border-radius: 25px;
+    background-color: white;
+    border-color: red;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #ff4d4d;
+    box-shadow: none;
+}
+
+.search-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: red;
+    border-color: red;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #ff4d4d;
+}
+
+
+</style>
 <!-- Breadcrumb Begin -->
 {{-- @dd(old('size[]')) --}}
 <div class="breadcrumb-option">
@@ -62,7 +91,7 @@
 
 
                     @endphp
-                    <form action="" method="GET">
+                    <form action="{{route('shop')}}" method="GET">
                         <div class="sidebar__sizes">
                             <div class="section-title">
                                 <h4>Shop by size</h4>
@@ -100,6 +129,18 @@
             <div class="col-lg-9 col-md-9">
                 <div class="row">
                     {{-- <div class="label new || stockout stockblue ">New</div> --}}
+                    <div class="col-12 mb-3">
+                        <form action="{{ route('shop')}}">
+                            <div class="input-group">
+                                <input type="text" class="form-control search-input" name="q" value="{{isset($searchQuery) ? $searchQuery : ''}}" placeholder="Search for products">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary search-button" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     @foreach ($products as $product)
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
@@ -114,11 +155,16 @@
                                 <div class="product__item__text">
                                     <h6><a href="{{route('product-details', $product->id)}}">{{$product->name}}</a></h6>
                                     <div class="rating">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                                        @php
+                                            $avgRating=round($product->reviews->avg('rating'));
+                                        @endphp
+                                        @for ($i = 0; $i < $avgRating; $i++)
+                                            <i class="fa fa-star" style="color:#ffb851"></i>
+                                        @endfor
+
+                                        @for ($i = 0; $i < 5 - $avgRating; $i++)
+                                            <i class="fa fa-star" style="color: #888383" ></i>
+                                        @endfor
                                     </div>
                                     <div class="product__price">{{$product->price}}</div>
                                 </div>

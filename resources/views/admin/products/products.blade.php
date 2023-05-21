@@ -34,6 +34,7 @@
                                     <th>Image</th>
                                     <th>Barkod</th>
                                     <th>Name</th>
+                                    <th>Description</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Category</th>
@@ -52,6 +53,7 @@
                                     </td>
                                     <td>{{$product->barcode}}</td>
                                     <td>{{$product->name}}</td>
+                                    <td>{{ strlen($product->description) > 20 ? substr($product->description, 0, 20) . '..' : $product->description}}</td>
                                     <td>{{$product->price}}</td>
                                     <td>{{$product->quantity}}</td>
                                     <td>{{$product->category->name}}</td>

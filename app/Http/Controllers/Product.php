@@ -12,37 +12,48 @@ class Product extends Controller
 {
     public function shop(Request $request)
     {
-        $selectedColors = $request->input('color', []);
-        $selectedSizes = $request->input('size', []);
+        $previousUrl = $request->server('HTTP_REFERER');
+        $queryString = parse_url($previousUrl, PHP_URL_QUERY);
+        parse_str($queryString, $params);
+
+        if(!$request->all()) {
+            $params = [];
+        }
+
+        // $mergedParams = array_merge($params, $request->all());
+        // $newUrl = url()->current() . '?' . http_build_query($mergedParams);
+
+        $selectedSizes = [];
+        $selectedColors = [];
+        $searchQuery = '';
         $products = null;
 
         if($request->has('category_id')){
-            // $chainIds = $this->getIds($request->get('category_id'));
-            // $chainIds[] = (int) $request->get('category_id');
             $categoryId = $request->get('category_id');
             $category = Category::find($categoryId);
             $descendants = $category->getAllDescendants()->pluck('id');
             $products = ProductModel::whereIn('category_id', $descendants->push($categoryId));
-
-            // dd($category->descendants);
-
-            // $products = ProductModel::where(function ($query) use ($chainIds) {
-            //     foreach ($chainIds as $category_id) {
-            //         $query->where('category_id', $category_id);
-            //     }
-            // });
         }
-        if($products && $request->has('size')){
-            $products = $products->whereIn('size_id', $selectedSizes);
 
-        }else if($request->has('size')) {
-            $products = ProductModel::whereIn('size_id', $selectedSizes);
+        if(isset($params['q']) || $request->has('q')) {
+            $searchQuery = $request->has('q') ? $request->input('q') : $params['q'] ;
+            $obj = $products ? $products : new ProductModel;
+
+            $products = $obj->where('name', 'like', '%' . $searchQuery . '%');
         }
-        if($products && $request->has('color')) {
-            $products = $products->whereIn('color_id', $selectedColors);
 
-        }else if($request->has('color')) {
-            $products = ProductModel::whereIn('color_id', $selectedColors);
+        if(isset($params['size']) || $request->has('size')) {
+            $selectedSizes = $request->has('size') ? $request->input('size', []) : $params['size'];
+
+            $obj = $products ? $products : new ProductModel;
+            $products = $obj->whereIn('size_id', $selectedSizes);
+        }
+
+        if(isset($params['color']) || $request->has('color')) {
+            $selectedColors = $request->has('color') ? $request->input('color', []) : $params['color'];
+
+            $obj = $products ? $products : new ProductModel;
+            $products = $obj->whereIn('color_id', $selectedColors);
         }
 
         if($products){
@@ -60,7 +71,7 @@ class Product extends Controller
             'maxPrice' =>  number_format(ProductModel::max('price'), 0, ',', ' '),
         ];
 
-        return view('shop', compact('products', 'categories', 'colors', 'sizes', 'prices', 'selectedSizes', 'selectedColors'));
+        return view('shop', compact('products', 'categories', 'colors', 'sizes', 'prices', 'selectedSizes', 'selectedColors', 'searchQuery'));
     }
 
 
