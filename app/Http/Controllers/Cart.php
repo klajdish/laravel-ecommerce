@@ -59,7 +59,6 @@ class Cart extends Controller
                 $cart->user_id = Session::get('loginId');
                 $cart->save();
             }
-
             $cartItem = $cart->cartItems()->where('product_id', $request->product_id)->first();
             $result = false;
 
@@ -120,7 +119,6 @@ class Cart extends Controller
             ],
             // Other validation rules for your request data
         ]);
-
 
         // Process the coupon code
         $couponCode = $validatedData['code'];

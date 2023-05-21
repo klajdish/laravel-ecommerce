@@ -108,7 +108,7 @@
                                         $productPrice =  number_format($productPrice, 2);
                                     @endphp
                                     <td class="cart__price">
-                                        {{$productPrice}}
+                                        <span class="discounted-price">{{ $productPrice }}</span>
                                         @if(session('coupon'))
                                             <span class="old-price">{{$product->price}}</span>
                                         @endif
@@ -171,7 +171,12 @@
                         <li>Subtotal <span>$ {{$totalCartPrice}}</span></li>
                         <li>Total <span>$ {{$totalCartPrice}}</span></li>
                     </ul>
-                    <a href="#" class="primary-btn">Proceed to checkout</a>
+                    <form action="{{route('checkout')}}" method="POST">
+                        @csrf
+                        <input type="hidden"  name='coupon' value="{{session('coupon') ? session('coupon')->id : ''}}">
+                        {{-- <a style="cursor:pointer;" id="checkout-btn" class="primary-btn">Proceed to checkout</a> --}}
+                        <button type="submit"  class="primary-btn">Proceed to checkout</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -213,8 +218,7 @@
             }
         });
     }
-
-
+        //Quantity update 
         $('#update-all-quantities').click(function() {
             var productIds = [];
             var quantities = [];
@@ -247,8 +251,28 @@
             });
         }
 
+        // Price
 
-
+    //     $(document).ready(function() {
+    //         $('#checkout-btn').click(function() {
+    //         var discountedPrice = $('.discounted-price').text(); 
+             
+    //         $.ajax({
+    //             url: '{{ route('checkout') }}',
+    //             method: 'GET',
+    //             data: {
+    //             _token: '{{ csrf_token() }}',
+    //             discounted_price: discountedPrice
+    //             },
+    //             success: function(response) {
+    //             // Handle success response
+    //             },
+    //             error: function(xhr, status, error) {
+    //             // Handle error response
+    //             }
+    //         });
+    //     });
+    // });
 
 </script>
 

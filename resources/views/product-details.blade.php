@@ -126,8 +126,6 @@
                             <i class="fa fa-star" style="color: #888383" ></i>
                         @endfor
 
-
-
                         <span>( {{$product->reviews->count()}} reviews )</span>
 
                     </div>

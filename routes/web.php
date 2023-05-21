@@ -5,6 +5,7 @@ use App\Http\Controllers\User;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Review;
 use App\Http\Controllers\Product;
+use App\Http\Controllers\Order;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleController;
 
@@ -39,19 +40,28 @@ Route::post('/update-user-data', [User::class, 'updateUser'])->name('update-user
 Route::get('/shop', [Product::class, 'shop'])->name('shop');
 Route::get('/product/{id}', [Product::class, 'productDetails'])->name('product-details');
 
+//Cart
 Route::get('/cart', [Cart::class, 'cart'])->name('cart');
 Route::post('/add-to-cart', [Cart::class, 'addToCart'])->name('add-to-cart');
 Route::post('/update-cart', [Cart::class, 'updateCart'])->name('update-cart');
-
 Route::delete('/cart-delete-item/{product_id}', [Cart::class, 'cartDeleteItem'])->name('cart.delete.item');
+Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
+
+//Order
+Route::post('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
+Route::get('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
+Route::post('/add-order', [Order::class, 'addOrder'])->name('add-order')->middleware('isLoggedIn');
 
 
+
+
+
+//Review
 Route::post('/add-review', [Review::class, 'addReview'])->name('add-review');
 Route::post('/edit-review', [Review::class, 'editReview'])->name('edit-review');
 Route::delete('/destory-review/{id}', [Review::class, 'destroy'])->name('destory-review');
 
 
-Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
 
 Route::controller(GoogleController::class)->group(function(){
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');
@@ -111,7 +121,17 @@ Route::controller(Admin::class)->group(function(){
     Route::get('/admin/coupon/update/{id}', 'updateCoupon')->name('admin.coupon.update')->middleware('adminCheck');
     Route::post('/admin/coupon/store', 'storeCoupon')->name('admin.coupon.store')->middleware('adminCheck');
     Route::get('/admin/coupon/delete', 'deleteCoupon')->name('admin.coupon.delete')->middleware('adminCheck');
+    
+    //Order Status
+    // Route::get('admin/coupons', 'coupons')->name('admin.coupons')->middleware('adminCheck');
+    // Route::get('/admin/coupon/add', 'addCoupon')->name('admin.coupon.add')->middleware('adminCheck');
+    // Route::post('/admin/coupon/add', 'createCoupon')->name('admin.coupon.add')->middleware('adminCheck');
+    // Route::get('/admin/coupon/update/{id}', 'updateCoupon')->name('admin.coupon.update')->middleware('adminCheck');
+    // Route::post('/admin/coupon/store', 'storeCoupon')->name('admin.coupon.store')->middleware('adminCheck');
+    // Route::get('/admin/coupon/delete', 'deleteCoupon')->name('admin.coupon.delete')->middleware('adminCheck');
 });
+
+
 // end admin routes
 
 
