@@ -27,6 +27,10 @@
     background-color: #ff4d4d;
 }
 
+.out-of-stock {
+    background: #ff4d4d;
+}
+
 
 </style>
 <!-- Breadcrumb Begin -->
@@ -145,7 +149,7 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
                                 <div class="product__item__pic set-bg" data-setbg="{{asset($product->image)}}">
-                                    <div class="label new">New</div>
+                                    <div class="label {{$product->quantity ? 'new': 'out-of-stock'}}"> {{$product->quantity ? 'In stock' : 'Out of stock'}}  </div>
                                     <ul class="product__hover">
                                         <li><a href="{{asset($product->image)}}" class="image-popup"><span class="arrow_expand"></span></a></li>
                                         <li><a href="#"><span class="icon_heart_alt"></span></a></li>

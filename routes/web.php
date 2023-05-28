@@ -53,7 +53,10 @@ Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
 //Order
 Route::post('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
 Route::get('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
+Route::post('/get-cities', [Order::class, 'getCities'])->name('get.cities')->middleware('isLoggedIn');
 Route::post('/add-order', [Order::class, 'addOrder'])->name('add-order')->middleware('isLoggedIn');
+Route::get('/payment/cancel', [Order::class, 'cancel'])->name('payment.cancel')->middleware('isLoggedIn');
+Route::get('/payment/success', [Order::class, 'success'])->name('payment.success')->middleware('isLoggedIn');
 
 
 //Review

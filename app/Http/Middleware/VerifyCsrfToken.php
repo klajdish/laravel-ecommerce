@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/check-email',
         '/check-update-email',
         '/check-password',
-        '/check-quantity'
+        '/check-quantity',
+        '/get-cities'
     ];
 }

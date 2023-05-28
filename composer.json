@@ -10,7 +10,9 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.6",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "paypal/paypal-checkout-sdk": "^1.0",
+        "pragmarx/countries": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
