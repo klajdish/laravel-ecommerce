@@ -73,6 +73,8 @@
                         <ul>
                             <li class="active"><a href="/">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
+                            <li><a href="/contact">Contact</a></li>
+
                             @if (Session::has('userRole') && Session::get('userRole') == 1)
                                 <li><a href="/admin">Admin</a></li>
                             @endif
@@ -98,7 +100,7 @@
                             </div>
                         @endif
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
+                          
                             <li><a href="/cart"><span class="icon_bag_alt"></span>
                                 @if(Session::has('loginId'))
                                     @php

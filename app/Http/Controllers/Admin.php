@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Size;
 use App\Models\User;
 use App\Models\Color;
+use App\Models\Order;
 use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Statuses;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -27,7 +29,8 @@ class Admin extends Controller
             'products' => Product::count(),
             'categories' => Category::count(),
             'colors' => Color::count(),
-            'sizes' =>Size::count()
+            'sizes' =>Size::count(),
+            'orders' =>Order::count()
         ];
 
         return view('admin.dashboard', compact('countRecords'));
@@ -606,5 +609,65 @@ class Admin extends Controller
             return back()->with('fail', 'Something went wrong');
         }
     }
+    //End coupon 
+
+    //Orders
+    public function orders(){
+
+        // $orders = Order::all()->sortByDesc('id');
+       
+        $orders = Order::with('status')
+        ->orderByRaw("CASE WHEN status_id = (SELECT id FROM statuses WHERE code = 'pending') THEN 0 ELSE 1 END")
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        return view('admin.orders.orders', compact('orders'));  
+    }
+
+    public function updateOrder(int $id){
+        $order = Order::where('id', $id)->first();
+        $statuses = Statuses::all();
+        // dd($statuses);
+        return view('admin.orders.form', compact('order','statuses'));
+    }
+    public function storeOrder(Request $request)
+    {
+        $order = Order::where('id',$request->order_id)->first();
+        if(
+            $request->status == $order->status_id       
+        )
+        {
+            return back()->with('success', 'You did not change the status!');
+        }
+        $request->validate([
+            'status' => 'required'
+        ]);
+
+        $order->status_id = $request->status;
+        $result = $order->save();
+
+        if($result) {
+            return redirect('admin/orders')->with('success', 'You have updated a order successfully');
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+
+    }
+    public function deleteOrder(Request $request)
+    {
+        if($request->has('order_id')){
+            $order = Order::where('id',$request->order_id)->first();
+            $result = $order->delete();
+            if($result) {
+                return redirect('admin/orders')->with('success', 'You have deleted a order successfully');
+            }else {
+                return back()->with('fail', 'Something went wrong');
+            }
+        }else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    //End Orders
 
 }

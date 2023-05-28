@@ -79,6 +79,12 @@
                         </i>  Coupons
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow " href="{{route('admin.orders')}}" >
+                        <i data-feather="package" class="nav-icon icon-xs me-2" >
+                        </i>  Orders
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
