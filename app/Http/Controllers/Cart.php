@@ -18,12 +18,16 @@ class Cart extends Controller
 
         $user = User::find(Session::get('loginId'));
 
+        $products = null;
         if ($user) {
-            $cartItems = $user->cart->cartItems()->with('product')->get();
+            if( $user->cart){  
+                $cartItems = $user->cart->cartItems()->with('product')->get();
 
-            $products = $cartItems->map(function ($cartItem) {
-                return $cartItem->product;
-            });
+                $products = $cartItems->map(function ($cartItem) {
+                    return $cartItem->product;
+                });            
+            } 
+
 
             return view('cart', compact('products','user'));
 
@@ -60,7 +64,10 @@ class Cart extends Controller
                         $product = Product::where('id', $request->product_id)->first();
 
                         $availableQuantity = $product->quantity;
-                        $cartItem = $cart->cartItems()->where('product_id', $request->product_id)->first();
+                        $cartItem = null;
+                        if ($cart){
+                            $cartItem = $cart->cartItems()->where('product_id', $request->product_id)->first();
+                        }
 
                         if ($quantity <= 0 || $quantity > $availableQuantity) {
                             $fail('Quantity exceeds the available quantity.');
@@ -71,13 +78,12 @@ class Cart extends Controller
                 ]
             ]);
 
-            $cart = CartModel::where('user_id',Session::get('loginId'))->first();
-
             if(!$cart) {
                 $cart = new CartModel();
                 $cart->user_id = Session::get('loginId');
                 $cart->save();
             }
+
             $cartItem = $cart->cartItems()->where('product_id', $request->product_id)->first();
             $result = false;
 
@@ -124,14 +130,13 @@ class Cart extends Controller
                     $quantityErrors[$productId] = true;
 
                 }else {
-                    if(empty($quantityErrors)){
-                        $cartItem->quantity = $newQuantity;
-                        $cartItem->save();
-                    }
+                    $cartItem->quantity = $newQuantity;
+                    $cartItem->save();
                 }
             }
         }
         session()->flash('quantityErrors', $quantityErrors);
+        
         if(empty($quantityErrors)){
             session()->flash('success', 'Success! You updated your cart.');
             return response()->json(['success' => true]);

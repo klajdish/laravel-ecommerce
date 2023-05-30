@@ -127,9 +127,9 @@ class User extends Controller
         if(Session::has('loginId')){
             Session::pull('loginId');
         }
-        if(Session::has('isFromProvider')){
-            Session::pull('isFromProvider');
-        }
+        // if(Session::has('isFromProvider')){
+        //     Session::pull('isFromProvider');
+        // }
         if(Session::has('userRole')){
             Session::pull('userRole');
         }
@@ -180,14 +180,12 @@ class User extends Controller
     public function checkEmail(Request $request){
         $loggedInUser = null;
         $email = $request->email;  //email i ndryshuar
-        $user = UserModel::where('email', $email)->first();
+        $user = UserModel::where('email', $email)->first(); // a ka user me kete emailin e ndryshuar
 
         if (Session::has('loginId')){
             $loggedInUser = UserModel::where('id', Session::get('loginId'))->first();
         }
         if ($loggedInUser && $user && ($loggedInUser->email != $email)) {
-            return response()->json(false); //shfaq error
-        } else if(!$loggedInUser && $user) {
             return response()->json(false); //shfaq error
         }else {
             return response()->json(true); //mos shfaq error
@@ -226,7 +224,7 @@ class User extends Controller
         }
 
         if ($result) {
-            return response()->json(false);
+            return response()->json(false); // shfaq error 
         } else {
             return response()->json(true);
         }

@@ -18,27 +18,30 @@ class Order extends Controller
 {
 
     public function checkout(Request $request){
+       
 
         $user = User::find(Session::get('loginId'));
         $countries = Countries::all()->pluck('name.common');
 
         if ($user) {
-            $cartItems = $user->cart->cartItems()->with('product')->get();
+           // dd($user->cart->cartItems()->count()); //nuk sillka null e vrt e bejm me at zero
+            if(!$user->cart || ($user->cart && $user->cart->cartItems()->count()== 0)){ 
+                return redirect('cart')->with('fail','Your cart is empty!');
+            }
+            $cartItems = $user->cart->cartItems;
 
             $products = $cartItems->map(function ($cartItem) {
                 return $cartItem->product;
             });
 
+            $coupon = null;
             if($request->coupon){
                 $couponId = $request->coupon;
                 $coupon = Coupon::where('id', $couponId)->first();
-
-                // $coupon = json_decode($coupon);
-
-                return view('checkout',compact('coupon','products','user', 'countries'));
-            }else{
-                return view('checkout',compact('products','user', 'countries'));
             }
+
+            return view('checkout',compact('coupon','products','user', 'countries'));
+
         } else {
             return back()->with('fail', 'Login to proceed');
         }

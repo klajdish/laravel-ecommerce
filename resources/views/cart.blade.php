@@ -52,7 +52,7 @@
             </div>
             <div class="col-lg-12">
                 <div class="shop__cart__table">
-                    @if (!$products->count())
+                    @if (!$products || ($products && $products->count() == 0))
                     <div class="container-fluid  mt-100">
                         <div class="row">
                            <div class="col-md-12">

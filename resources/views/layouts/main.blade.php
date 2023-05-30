@@ -104,12 +104,15 @@
                             <li><a href="/cart"><span class="icon_bag_alt"></span>
                                 @if(Session::has('loginId'))
                                     @php
+                                    $cartItemProductsCount = 0;
                                     $user = User::Where('id', Session::get('loginId'))->first();
                                     if($user){
-                                        $cartItemProductsCount = $user->cart->cartItems()->count();
+                                        if($user->cart){
+                                            $cartItemProductsCount = $user->cart->cartItems()->count();
+                                        }
                                     }
                                     @endphp
-                                <div class="tip">{{$cartItemProductsCount}}</div>
+                                    <div class="tip">{{$cartItemProductsCount}}</div>
                                 @endif
                             </a></li>
                         </ul>

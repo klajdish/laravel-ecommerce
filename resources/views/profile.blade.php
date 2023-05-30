@@ -44,10 +44,12 @@
 							<i class="fa fa-home text-center mr-1"></i>
 							Account
 						</a>
+                        @if(!$user->google_id)
 						<a class="nav-link" id="password-tab" data-toggle="pill" href="#password-t" role="tab" aria-controls="password" aria-selected="false">
 							<i class="fa fa-key text-center mr-1"></i>
 							Password
 						</a>
+                        @endif
 					</div>
                     <div class="w-100 ps-5 text-center">
                         <a class="text-danger text-center" href="/logout">
@@ -86,8 +88,10 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        @if(!$user->google_id)
                                         <label>Email</label>
                                         <input  name="email" id="email" type="email" class="form-control" value={{$user->email}}>
+                                        @endif
                                     </div>
                                     <span id="email-error" class="text-danger my-2 ml-3 error-msg">
                                         @error('email')
@@ -100,10 +104,11 @@
                             <div>
                                 <button type="submit" class="btn btn-primary btn-block">Update</button>
                             </div>
-                                <button class="btn btn-light">Cancel</button>
+                                {{-- <button class="btn btn-light">Cancel</button> --}}
                             </div>
                         </form>
 					</div>
+                    {{-- Form2 Reset Password --}}
                     @if(!$user->google_id)
                         <div class="tab-pane fade" id="password-t" role="tabpanel" aria-labelledby="password-tab">
                             <h3 class="mb-4">Password Settings</h3>
@@ -150,7 +155,7 @@
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary btn-block"> Update </button>
                                     </div> <!-- form-group// -->
-                                    <button class="btn btn-light">Cancel</button>
+                                  
                                 </div>
                             </form>
                             </div>
@@ -163,27 +168,27 @@
     <script>
         $(document).ready(function() {
 
-            $('#update-user-data').submit(function(event) {
+            // $('#update-user-data').submit(function(event) {
 
-                var defaultValues = {
-                    firstname:"{{$user->firstname}}",
-                    lastname: "{{$user->lastname}}",
-                    email: "{{$user->email}}"
-                };
-                var formValues = {
-                    firstname: $('input[name="firstname"]').val(),
-                    lastname: $('input[name="lastname"]').val(),
-                    email:$('input[name="email"]').val()
-                };
+            //     var defaultValues = {
+            //         firstname:"{{$user->firstname}}",
+            //         lastname: "{{$user->lastname}}",
+            //         email: "{{$user->email}}"
+            //     };
+            //     var formValues = {
+            //         firstname: $('input[name="firstname"]').val(),
+            //         lastname: $('input[name="lastname"]').val(),
+            //         email:$('input[name="email"]').val()
+            //     };
 
-                if (JSON.stringify(defaultValues) === JSON.stringify(formValues)) {
+            //     if (JSON.stringify(defaultValues) === JSON.stringify(formValues)) {
 
-                    $('.nochanges').addClass('my-alert alert-success');
-                    $('.nochanges').text('You did not change anything');
-                    event.preventDefault(); // Prevent the form submission
+            //         $('.nochanges').addClass('my-alert alert-success');
+            //         $('.nochanges').text('You did not change anything');
+            //         event.preventDefault(); // Prevent the form submission
 
-                }
-            });
+            //     }
+            // });
 
             $.validator.addMethod("strongPassword", function(value, element) {
                 return this.optional(element) || /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/.test(value);
