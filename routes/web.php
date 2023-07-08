@@ -20,7 +20,10 @@ use App\Http\Controllers\GoogleController;
 |
 */
 
-Route::get('/', [User::class, 'home']);
+Route::get('/', [User::class, 'home']); // user controller
+
+//Contact
+Route::view('/contact', 'contact');
 
 Route::get('/login', [User::class, 'login'])->middleware('alreadyLoggedIn');
 Route::post('/login', [User::class, 'loginPost'])->name('login');
@@ -52,6 +55,8 @@ Route::post('/coupon', [Cart::class, 'applyDiscount'])->name('coupon');
 Route::get('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
 Route::post('/checkout', [Order::class, 'checkout'])->name('checkout')->middleware('isLoggedIn');
 Route::post('/add-order', [Order::class, 'addOrder'])->name('add-order')->middleware('isLoggedIn');
+Route::post('/user/address', [User::class, 'createOrUpdateAddress'])->name('user.address')->middleware('isLoggedIn');
+
 
 Route::post('/get-cities', [Order::class, 'getCities'])->name('get.cities')->middleware('isLoggedIn');
 Route::get('/payment/cancel', [Order::class, 'cancel'])->name('payment.cancel')->middleware('isLoggedIn');
@@ -124,8 +129,6 @@ Route::controller(Admin::class)->group(function(){
     Route::post('/admin/coupon/store', 'storeCoupon')->name('admin.coupon.store')->middleware('adminCheck');
     Route::get('/admin/coupon/delete', 'deleteCoupon')->name('admin.coupon.delete')->middleware('adminCheck');
 
-    //Contact
-    Route::view('/contact', 'contact');
 
     //ORDERS
     Route::get('admin/orders', 'orders')->name('admin.orders')->middleware('adminCheck');

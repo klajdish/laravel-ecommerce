@@ -148,12 +148,7 @@
                     <div class="section-title">
                         <h4>Best seller</h4>
                     </div>
-                    @foreach ($products as $product)
-                        @php
-                            if( $loop->index === 3){
-                                break;
-                            }
-                        @endphp
+                    @foreach ($bestSellerProducts as $product)
                         <div class="trend__item w-50 h-25 d-flex gap-2">
                             <div class=" w-50 trend__item__pic">
                                 <img class="" src="{{asset($product->image)}}" alt="">
@@ -161,11 +156,16 @@
                             <div class="trend__item__text">
                                 <h6>{{$product->name}}</h6>
                                 <div class="rating">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
+                                    @php
+                                        $avgRating=round($product->reviews->avg('rating'));
+                                    @endphp
+                                    @for ($i = 0; $i < $avgRating; $i++)
+                                        <i class="fa fa-star" style="color:#ffb851"></i>
+                                    @endfor
+
+                                    @for ($i = 0; $i < 5 - $avgRating; $i++)
+                                        <i class="fa fa-star" style="color: #888383" ></i>
+                                    @endfor
                                 </div>
                                 <div class="product__price">$ {{$product->price}}</div>
                             </div>
@@ -191,11 +191,16 @@
                         <div class="trend__item__text">
                             <h6>{{$product->name}}</h6>
                             <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
+                                @php
+                                    $avgRating=round($product->reviews->avg('rating'));
+                                @endphp
+                                @for ($i = 0; $i < $avgRating; $i++)
+                                    <i class="fa fa-star" style="color:#ffb851"></i>
+                                @endfor
+
+                                @for ($i = 0; $i < 5 - $avgRating; $i++)
+                                    <i class="fa fa-star" style="color: #888383" ></i>
+                                @endfor
                             </div>
                             <div class="product__price">$ {{$product->price}}</div>
                         </div>

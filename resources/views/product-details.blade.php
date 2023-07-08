@@ -497,6 +497,7 @@ $('#add-to-cart').validate({
         }
     },
     errorPlacement: function(error, element) {
+        // element.parent().parent().parent().parent().siblings('.invalid-feedback').html('');
         error.appendTo(element.parent().parent().parent().parent().siblings('.invalid-feedback'));
     }
 });

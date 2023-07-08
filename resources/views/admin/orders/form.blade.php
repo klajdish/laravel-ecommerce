@@ -40,13 +40,13 @@
                         @endif
                         <div class="mb-1">
                             <label for="name" class="form-label">{{$order->user->firstname}}</label>
-                           
+
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Status</label>
                             <select id="status" name="status" class="form-select">
                                 @foreach ($statuses as $status)
-                                    <option {{isset($statuses) ? 'selected' : ''}} value="{{$status->id}}">{{$status->code}}</option>
+                                    <option {{$status->id == $order->status_id ? 'selected' : ''}} value="{{$status->id}}">{{$status->code}}</option>
                                 @endforeach
                               </select>
                             <div class="invalid-feedback d-block">
@@ -72,44 +72,32 @@
 
     $(document).ready(function() {
         $("#add-order").validate({
-        rules: {
-          name: {
-            required: true
-          },
-          code: {
-            required: true
-          }
-        },
-        messages: {
-          name: {
-            required: "Please enter a size name"
-          },
-          code: {
-            required: "Please choose a size"
-          }
-        },
-        errorPlacement: function(error, element) {
-            error.appendTo(element.siblings('.invalid-feedback'));
-        }
-      });
+            rules: {
+                status: {
+                    required: true
+                }
+            },
+            messages: {
+                status: {
+                    required: "Please choose a status"
+                },
+            },
+            errorPlacement: function(error, element) {
+                error.appendTo(element.siblings('.invalid-feedback'));
+            }
+        });
 
 
-      $("#update-size").validate({
+      $("#update-order").validate({
         rules: {
-          name: {
-            required: true
-          },
-          code: {
-            required: true
-          }
+            status: {
+                required: true
+            }
         },
         messages: {
-          name: {
-            required: "Please enter a size name"
-          },
-          code: {
-            required: "Please choose a size"
-          }
+            status: {
+                required: "Please choose a status"
+            },
         },
         errorPlacement: function(error, element) {
             error.appendTo(element.siblings('.invalid-feedback'));

@@ -50,6 +50,10 @@
 							Password
 						</a>
                         @endif
+                        <a class="nav-link" id="address-tab" data-toggle="pill" href="#address" role="tab" aria-controls="address" aria-selected="true">
+							<i class="fa fa-home text-center mr-1"></i>
+							Address
+						</a>
 					</div>
                     <div class="w-100 ps-5 text-center">
                         <a class="text-danger text-center" href="/logout">
@@ -155,11 +159,79 @@
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary btn-block"> Update </button>
                                     </div> <!-- form-group// -->
-                                  
+
                                 </div>
                             </form>
                             </div>
                         @endif
+
+                        @php
+                            $userAddress = $user->addresses()->first();
+                        @endphp
+                        <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                            <h3 class="mb-4">Addres Settings</h3>
+                            <form action="{{route('user.address')}}"  method="POST" id="user-address">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Country/State</label>
+                                            <select name="state" class="form-control" id="state" class="mb-1">
+                                                <option value="">Select State</option>
+                                                @foreach ($countries as $country)
+                                                    <option {{$userAddress && $userAddress->state == $country ? 'selected' : ''}} value="{{ $country }}">{{ $country }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <span  id="state-error" class="text-danger my-2 ml-3 error-msg">
+                                            @error('state')
+                                                {{$message}}
+                                            @enderror
+                                        </span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Town/City</label>
+                                            <select name="city" id="city" class="form-control" class="mb-1">
+                                            </select>
+                                        </div>
+                                        <span id="city-error" class="text-danger my-2 ml-3 error-msg">
+                                            @error('city')
+                                                {{$message}}
+                                            @enderror
+                                        </span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Street</label>
+                                            <input  name="street" id="street" type="text" class="form-control" value="{{$userAddress && $userAddress->street ? $userAddress->street : '' }}">
+                                        </div>
+                                        <span id="street-error" class="text-danger my-2 ml-3 error-msg">
+                                            @error('street')
+                                                {{$message}}
+                                            @enderror
+                                        </span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Postcode/Zip</label>
+                                            <input  name="zip_code" id="zip_code" type="text" class="form-control" value="{{$userAddress && $userAddress->zip_code ? $userAddress->zip_code : '' }}">
+                                        </div>
+                                        <span id="zip_code-error" class="text-danger my-2 ml-3 error-msg">
+                                            @error('zip_code')
+                                                {{$message}}
+                                            @enderror
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-block">{{$userAddress ? 'Update' : 'Add'}} </button>
+                                </div>
+                                    {{-- <button class="btn btn-light">Cancel</button> --}}
+                                </div>
+                            </form>
+                        </div>
 				</div>
 			</div>
 		</div>
@@ -291,6 +363,117 @@
                     error.appendTo(element.parent().siblings('.error-msg'));
                 }
             });
+
+
+
+
+
+
+
+
+
+            triggerStateChange();
+
+
+
+            // get cities for a selected country
+
+            $('#state').change(function() {
+                var country = $(this).val();
+                if (country) {
+                    $.ajax({
+                        url: '/get-cities',
+                        type: 'POST',
+                        data: { country: country },
+                        dataType: 'json',
+                        success: function(data) {
+                            var cityOptions = '<option value="">Select a city</option>';
+                            $.each(data, function(key, city) {
+                                cityOptions += '<option value="' + city + '">' + city + '</option>';
+                            });
+                            $('#city').html(cityOptions);
+                        }
+                    });
+                } else {
+                    $('#city').html('<option value="">Select a city</option>');
+                }
+            });
+
+
+             // validate address
+
+        $("#user-address").validate({
+            rules: {
+                state: {
+                    required: true,
+                },
+                city: {
+                    required: true,
+                },
+                street: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 255,
+                    pattern: /^[a-zA-Z0-9\s]+$/
+                },
+                zip_code: {
+                    required: true,
+                    maxlength: 10,
+                    pattern: /^[A-Z0-9]+$/
+                }
+            },
+            messages: {
+                state: {
+                    required: "The state field is required.",
+                },
+                city: {
+                    required: "The city field is required.",
+                },
+                street: {
+                    required: "Please enter your street address.",
+                    minlength: "Your street address must be at least 3 characters long.",
+                    maxlength: "Your street address cannot exceed 255 characters.",
+                    pattern: "Your street address can only contain letters, numbers, and spaces."
+                },
+                zip_code: {
+                    required: "The ZIP code field is required.",
+                    maxlength: "The ZIP code field cannot exceed 10 characters.",
+                    pattern: "Please enter only uppercase letters."
+                }
+            },
+            errorPlacement: function(error, element) {
+                error.appendTo(element.parent().siblings('.error-msg'));
+            }
         });
+
+        });
+
+        function triggerStateChange() {
+            var country = $('#state').val();
+            var userCity = null;
+            @if(isset($userAddress))
+                userCity = {!! json_encode($userAddress->city) !!};
+            @endif
+            if (country) {
+                $.ajax({
+                    url: '/get-cities',
+                    type: 'POST',
+                    data: { country: country },
+                    dataType: 'json',
+                    success: function(data) {
+                        var cityOptions = '<option value="">Select a city</option>';
+                        $.each(data, function(key, city) {
+                            cityOptions += '<option value="' + city + '" ' + (city === userCity ? 'selected' : '') + '>' + city + '</option>';
+                        });
+                        $('#city').html(cityOptions);
+                    }
+                });
+            } else {
+                $('#city').html('<option value="">Select a city</option>');
+            }
+        }
+
+
+
     </script>
 @endsection

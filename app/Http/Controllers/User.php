@@ -15,13 +15,26 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
+use PragmaRX\Countries\Package\Countries;
+use App\Models\Address;
+
+
+
 
 class User extends Controller
 {
     public function home()
     {
-        $products = Product::take(4)->get();
-        return view('home', compact('products'));
+        $products = Product::orderBy('created_at', 'desc')->take(4)->get();
+        $bestSellerProducts = Product::withCount(['orderItems as total_quantity' => function ($query) {
+                                    $query->select(\DB::raw('sum(quantity)'));
+                                }])
+                                ->orderByDesc('total_quantity')
+                                ->take(3)
+                                ->get();
+
+
+        return view('home', compact('products', 'bestSellerProducts'));
     }
 
     public function login() {
@@ -108,7 +121,7 @@ class User extends Controller
                 $request->session()->put('userRole', $user->role);
                 return redirect('profile')->with('success', 'You have logged in successfully');
             }else {
-                return back()->with('fail', 'Something went wrong'); 
+                return back()->with('fail', 'Something went wrong');
             }
         }else {
             return back()->with('fail', 'Something went wrong');
@@ -119,8 +132,11 @@ class User extends Controller
     {
         if(Session::has('loginId')) {
             $user = UserModel::where('id', Session::get('loginId'))->first();
+
+            $countries = Countries::all()->pluck('name.common');
         }
-        return view('profile', compact('user'));
+
+        return view('profile', compact('user', 'countries'));
     }
 
     public function logout() {
@@ -224,7 +240,7 @@ class User extends Controller
         }
 
         if ($result) {
-            return response()->json(false); // shfaq error 
+            return response()->json(false); // shfaq error
         } else {
             return response()->json(true);
         }
@@ -265,6 +281,35 @@ class User extends Controller
         }
 
     }
+
+
+
+
+
+
+    public function createOrUpdateAddress(Request $request)
+    {
+        $request->validate([
+            'state' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'street' => 'required|string|max:255',
+            'zip_code' => 'required|string|max:10'
+        ], [
+            'state.required' => 'The state field is required.',
+            'city.required' => 'The city field is required.',
+            'street.required' => 'The street field is required.',
+            'zip_code.required' => 'The ZIP code field is required.'
+        ]);
+
+        $userId = Session::get('loginId');
+        $addressData = $request->only(['state', 'city', 'street', 'zip_code']);
+
+        Address::updateOrCreate(['user_id' => $userId], $addressData);
+
+        return redirect()->back()->with('success', 'Address saved successfully.');
+    }
+
+
 
 
 }

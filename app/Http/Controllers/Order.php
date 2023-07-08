@@ -18,14 +18,13 @@ class Order extends Controller
 {
 
     public function checkout(Request $request){
-       
+
 
         $user = User::find(Session::get('loginId'));
         $countries = Countries::all()->pluck('name.common');
 
         if ($user) {
-           // dd($user->cart->cartItems()->count()); //nuk sillka null e vrt e bejm me at zero
-            if(!$user->cart || ($user->cart && $user->cart->cartItems()->count()== 0)){ 
+            if(!$user->cart || ($user->cart && $user->cart->cartItems()->count()== 0)){
                 return redirect('cart')->with('fail','Your cart is empty!');
             }
             $cartItems = $user->cart->cartItems;
@@ -59,35 +58,36 @@ class Order extends Controller
     {
         $user = User::where('id', Session::get('loginId'))->first();
 
-        if($user){
-            $validatedData = $request->validate([
-                'state' => 'required|string|max:255',
-                'city' => 'required|string|max:255',
-                'street' => 'required|string|max:255',
-                'zip_code' => 'required|string|max:10',
-                'payment_method' => 'required'
-            ], [
-                'state.required' => 'The state field is required.',
-                'city.required' => 'The city field is required.',
-                'street.required' => 'The street field is required.',
-                'zip_code.required' => 'The ZIP code field is required.',
-                'payment_method.required' => 'The Payment method is required'
-            ]);
 
-            // save OrderAddress model into database
-            $addressData = $validatedData;
-            unset($addressData['payment_method']);
-            $orderAddress = OrderAddress::create($addressData);
+        if($user){
+
+            $validatedData = [];
+            if(!$request->has('user_address')) {
+
+                $validatedData = $request->validate([
+                    'state' => 'required|string|max:255',
+                    'city' => 'required|string|max:255',
+                    'street' => 'required|string|max:255',
+                    'zip_code' => 'required|string|max:10',
+                    'payment_method' => 'required'
+                ], [
+                    'state.required' => 'The state field is required.',
+                    'city.required' => 'The city field is required.',
+                    'street.required' => 'The street field is required.',
+                    'zip_code.required' => 'The ZIP code field is required.',
+                    'payment_method.required' => 'The Payment method is required'
+                ]);
+            }else {
+                $validatedData = $request->validate([
+                    'payment_method' => 'required'
+                ], [
+                    'payment_method.required' => 'The Payment method is required'
+                ]);
+            }
+
 
             // get cart items
             $cartItems = $user->cart->cartItems;
-
-            // create Order model
-            $order = new OrderModel;
-            $order->user_id = Session::get('loginId');
-            $order->address_id =  $orderAddress->id;
-            $order->status_id = 1;
-            $order->payment_method = $validatedData['payment_method'];
 
             $coupon = null;
             if($request->coupon){
@@ -95,7 +95,6 @@ class Order extends Controller
             }
 
             $orderTotal = $this->getOrderTotal($cartItems, $coupon);
-            $order->total = $orderTotal;
 
             if (strtolower($validatedData['payment_method'])  === 'paypal') {
                 // Set up PayPal client
@@ -116,8 +115,8 @@ class Order extends Controller
                         ],
                     ],
                     'application_context' => [
-                        'cancel_url' => route('payment.cancel'), // Set your cancel URL here
-                        'return_url' => route('payment.success'), // Set your success URL here
+                        'cancel_url' => route('payment.cancel'),
+                        'return_url' => route('payment.success'),
                     ],
                 ];
                 $response = $client->execute($orderRequest);
@@ -127,10 +126,14 @@ class Order extends Controller
                     $approvalLink = collect($response->result->links)->firstWhere('rel', 'approve');
                     if ($approvalLink) {
 
-                        Session::put('orderData', [
-                            'order' => $order,
+                        $userAddress = $user->addresses()->first();
+
+                        Session::flash('orderData', [
                             'cartItems' => $cartItems,
-                            'coupon' => $coupon
+                            'orderTotal' => $orderTotal,
+                            'coupon' => $coupon,
+                            'validatedData' => $validatedData,
+                            'userAddress' => $userAddress
                         ]);
 
                         return redirect()->away($approvalLink->href);
@@ -158,9 +161,36 @@ class Order extends Controller
     {
         $orderData = Session::get('orderData');
 
-        $order = $orderData['order'];
+        $orderTotal = $orderData['orderTotal'];
         $cartItems = $orderData['cartItems'];
         $coupon = $orderData['coupon'];
+        $validatedData = $orderData['validatedData'];
+        $userAddress = $orderData['userAddress'];
+
+
+        // save OrderAddress model into database
+        if($userAddress) {
+            $orderAddress = OrderAddress::create([
+                'state' => $userAddress->state,
+                'city' => $userAddress->city,
+                'street' => $userAddress->street,
+                'zip_code' => $userAddress->zip_code,
+            ]);
+        }else {
+            $addressData = $validatedData;
+            unset($addressData['payment_method']);
+            $orderAddress = OrderAddress::create($addressData);
+        }
+
+
+        // create Order model
+        $order = new OrderModel;
+        $order->user_id = Session::get('loginId');
+        $order->address_id =  $orderAddress->id;
+        $order->status_id = 1;
+        $order->payment_method = $validatedData['payment_method'];
+        $order->total = $orderTotal;
+
 
         //  save order model to get the id
         $order->save();

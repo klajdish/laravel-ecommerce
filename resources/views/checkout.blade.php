@@ -12,7 +12,17 @@
         color: #666666;
         background-color: white;
     }
+
+    .payment_method_wrapper span label {
+        padding-left: 0px;
+        margin-bottom: 0px;
+        color: unset;
+    }
 </style>
+
+@php
+    $userAddress = $user->addresses()->first();
+@endphp
 <section class="checkout spad">
     <div class="container">
         <div class="row">
@@ -30,6 +40,26 @@
                 <div class="col-lg-8">
                     <h5>Billing detail</h5>
                     <div class="row">
+                        @if ($userAddress)
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" name="user_address" type="checkbox" value="" id="user_address">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                    Choose your existing address
+                                    <p>
+                                        <p>State: {{$userAddress->state}}</p>
+                                        <p>City: {{$userAddress->city}}</p>
+                                        <p>Street: {{$userAddress->street}}</p>
+                                        <p>Zip Code: {{$userAddress->zip_code}}</p>
+                                    </p>
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+                            <p style="color:red; margin-top: 20px; margin-bottom: 20px">OR <span>Create a new address</span></p>
+
+                            <hr>
+                        @endif
                         <div class="col-lg-12">
                             <div class="checkout__form__input">
                                 <p>Country/State <span>*</span></p>
@@ -56,7 +86,7 @@
                                 </span>
                             </div>
                             <div class="checkout__form__input">
-                                <p>Street</p>
+                                <p>Street <span>*</span></p>
                                 <input type="text" class="mb-1" name="street" id="street">
                                 <span  class="invalid-feedback text-danger text-start my-1 d-flex error-msg pb-2">
                                     @error('street')
@@ -115,16 +145,16 @@
                                 <li>Total <span>${{$totalCartPrice}}</span></li>
                             </ul>
                         </div>
-                        <div class="checkout__order__widget">
-                            <label for="paypal">
+                        <div class="checkout__order__widget payment_method_wrapper">
+                            <label for="payment_method">
                                 PayPal
-                                <input type="checkbox" name="payment_method" id="paypal" value="PayPal">
-                                <span class="checkmark"></span>
+                                <input type="checkbox" name="payment_method" id="payment_method" value="PayPal" checked>
                                 <span  class="invalid-feedback text-danger text-start my-1 d-flex error-msg pb-2">
                                     @error('payment_method')
                                         {{$message}}
                                     @enderror
                                 </span>
+                                <span class="checkmark"></span>
                             </label>
                         </div>
 
@@ -164,39 +194,86 @@
             $("#checkout-form").validate({
                 rules: {
                     state: {
-                        required: true,
+                        required: {
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        }
                     },
                     city: {
-                        required: true,
+                        required: {
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        }
                     },
                     street: {
-                        required: true,
-                        maxlength: 255
+                        required: {
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        },
+                        minlength: {
+                            param: 3,
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        },
+                        maxlength: {
+                            param: 255,
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        },
+                        pattern: {
+                            param: /^[a-zA-Z0-9\s]+$/,
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        }
                     },
                     zip_code: {
-                        required: true,
-                        maxlength: 10
+                        required: {
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        },
+                        maxlength: {
+                            param: 10,
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        },
+                        pattern: {
+                            param: /^[A-Z0-9]+$/,
+                            depends: function(element) {
+                                return !$("#user_address").is(":checked");
+                            }
+                        }
                     },
-                    paypal: {
+                    payment_method: {
                         required: true
                     }
                 },
                 messages: {
                     state: {
-                        required: "The state field is required.",
+                        required: "The state field is required."
                     },
                     city: {
-                        required: "The city field is required.",
+                        required: "The city field is required."
                     },
                     street: {
-                        required: "The street field is required.",
-                        maxlength: "The street field cannot exceed 255 characters."
+                        required: "Please enter your street address.",
+                        minlength: "Your street address must be at least 3 characters long.",
+                        maxlength: "Your street address cannot exceed 255 characters.",
+                        pattern: "Your street address can only contain letters, numbers, and spaces."
                     },
                     zip_code: {
                         required: "The ZIP code field is required.",
-                        maxlength: "The ZIP code field cannot exceed 10 characters."
+                        maxlength: "The ZIP code field cannot exceed 10 characters.",
+                        pattern: "Please enter only uppercase letters."
                     },
-                    paypal: {
+                    payment_method: {
                         required: "Please choose a payment method."
                     }
                 },
@@ -204,6 +281,7 @@
                     error.appendTo(element.siblings('.invalid-feedback'));
                 }
             });
+
         });
 
 

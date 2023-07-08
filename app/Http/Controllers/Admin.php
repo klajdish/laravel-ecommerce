@@ -609,19 +609,17 @@ class Admin extends Controller
             return back()->with('fail', 'Something went wrong');
         }
     }
-    //End coupon 
+    //End coupon
 
     //Orders
     public function orders(){
-
         // $orders = Order::all()->sortByDesc('id');
-       
+
         $orders = Order::with('status')
-        ->orderByRaw("CASE WHEN status_id = (SELECT id FROM statuses WHERE code = 'pending') THEN 0 ELSE 1 END")
         ->orderBy('created_at', 'desc')
         ->get();
 
-        return view('admin.orders.orders', compact('orders'));  
+        return view('admin.orders.orders', compact('orders'));
     }
 
     public function updateOrder(int $id){
@@ -630,12 +628,11 @@ class Admin extends Controller
         // dd($statuses);
         return view('admin.orders.form', compact('order','statuses'));
     }
+
     public function storeOrder(Request $request)
     {
         $order = Order::where('id',$request->order_id)->first();
-        if(
-            $request->status == $order->status_id       
-        )
+        if ($request->status == $order->status_id)
         {
             return back()->with('success', 'You did not change the status!');
         }
